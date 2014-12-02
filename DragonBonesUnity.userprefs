@@ -1,0 +1,16 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Script/DragonBones/Objects/TransformTimeline.cs">
+    <Files>
+      <File FileName="Assets/Script/DragonBones/Objects/DisplayData.cs" Line="11" Column="30" />
+      <File FileName="Assets/Script/DragonBones/Objects/TImeline.cs" Line="11" Column="30" />
+      <File FileName="Assets/Script/DragonBones/Objects/SlotData.cs" Line="11" Column="30" />
+      <File FileName="Assets/Script/DragonBones/Objects/TransformFrame.cs" Line="11" Column="30" />
+      <File FileName="Assets/Script/DragonBones/Objects/TransformTimeline.cs" Line="11" Column="30" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ProductVersion>10.0.20506</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{CFB55781-7C78-CD04-55F8-6B743191D5DC}</ProjectGuid>
+	<OutputType>Library</OutputType>
+	<AppDesignerFolder>Properties</AppDesignerFolder>
+	<RootNamespace></RootNamespace>
+	<AssemblyName>Assembly-CSharp</AssemblyName>
+	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<FileAlignment>512</FileAlignment>
+	<BaseDirectory>Assets</BaseDirectory>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<OutputPath>Temp\bin\Debug\</OutputPath>
+	<DefineConstants>DEBUG;TRACE;UNITY_4_5_5;UNITY_4_5;UNITY_STANDALONE_OSX;ENABLE_MICROPHONE;ENABLE_TEXTUREID_MAP;ENABLE_UNITYEVENTS;ENABLE_NEW_HIERARCHY ;ENABLE_AUDIO_FMOD;UNITY_STANDALONE;ENABLE_MONO;ENABLE_TERRAIN;ENABLE_SUBSTANCE;ENABLE_GENERICS;INCLUDE_WP8SUPPORT;ENABLE_MOVIES;ENABLE_WWW;ENABLE_IMAGEEFFECTS;INCLUDE_WP_BLUE_SUPPORT;ENABLE_WEBCAM;INCLUDE_METROSUPPORT;RENDER_SOFTWARE_CURSOR;ENABLE_NETWORK;ENABLE_PHYSICS;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_2D_PHYSICS;ENABLE_GAMECENTER;ENABLE_SHADOWS;ENABLE_AUDIO;ENABLE_NAVMESH_CARVING;ENABLE_DUCK_TYPING;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;ENABLE_PROFILER;UNITY_EDITOR;UNITY_EDITOR_OSX;UNITY_TEAM_LICENSE;UNITY_PRO_LICENSE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<NoWarn>0169</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<DebugType>pdbonly</DebugType>
+	<Optimize>true</Optimize>
+	<OutputPath>Temp\bin\Release\</OutputPath>
+	<DefineConstants>TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<NoWarn>0169</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="System" />
+    <Reference Include="System.XML" />
+	<Reference Include="System.Core" />
+	<Reference Include="System.Xml.Linq" />
+	<Reference Include="UnityEngine">
+	  <HintPath>/Applications/Unity/Unity.app/Contents/Frameworks/Managed/UnityEngine.dll</HintPath>
+	</Reference>
+	<Reference Include="UnityEditor">
+	  <HintPath>/Applications/Unity/Unity.app/Contents/Frameworks/Managed/UnityEditor.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+     <Compile Include="Assets\Script\Com\Viperstudio\Events\Event.cs" />
+     <Compile Include="Assets\Script\Com\Viperstudio\Events\EventDispatcher.cs" />
+     <Compile Include="Assets\Script\Com\Viperstudio\Geom\ColorTransform.cs" />
+     <Compile Include="Assets\Script\Com\Viperstudio\Geom\Matrix.cs" />
+     <Compile Include="Assets\Script\Com\Viperstudio\Geom\Point.cs" />
+     <Compile Include="Assets\Script\Com\Viperstudio\Geom\Rectangle.cs" />
+     <Compile Include="Assets\Script\Com\Viperstudio\Geom\Transform.cs" />
+     <Compile Include="Assets\Script\Com\Viperstudio\Utils\FPS.cs" />
+     <Compile Include="Assets\Script\Com\Viperstudio\Utils\Json.cs" />
+     <Compile Include="Assets\Script\Com\Viperstudio\Utils\Logger.cs" />
+     <Compile Include="Assets\Script\Com\Viperstudio\Utils\Matrix.cs" />
+     <Compile Include="Assets\Script\DragonBones\Animation\AimationFadeOutMode.cs" />
+     <Compile Include="Assets\Script\DragonBones\Animation\Animation.cs" />
+     <Compile Include="Assets\Script\DragonBones\Animation\AnimationState.cs" />
+     <Compile Include="Assets\Script\DragonBones\Animation\IAnimatable.cs" />
+     <Compile Include="Assets\Script\DragonBones\Animation\TimelineState.cs" />
+     <Compile Include="Assets\Script\DragonBones\Animation\WorldClock.cs" />
+     <Compile Include="Assets\Script\DragonBones\Core\Armature.cs" />
+     <Compile Include="Assets\Script\DragonBones\Core\Bone.cs" />
+     <Compile Include="Assets\Script\DragonBones\Core\Object.cs" />
+     <Compile Include="Assets\Script\DragonBones\Core\Slot.cs" />
+     <Compile Include="Assets\Script\DragonBones\DragonBones.cs" />
+     <Compile Include="Assets\Script\DragonBones\Objects\AnimationData.cs" />
+     <Compile Include="Assets\Script\DragonBones\Objects\ArmatureData.cs" />
+     <Compile Include="Assets\Script\DragonBones\Objects\BoneData.cs" />
+     <Compile Include="Assets\Script\DragonBones\Objects\DisplayData.cs" />
+     <Compile Include="Assets\Script\DragonBones\Objects\DragonBonesData.cs" />
+     <Compile Include="Assets\Script\DragonBones\Objects\EllipseData.cs" />
+     <Compile Include="Assets\Script\DragonBones\Objects\Frame.cs" />
+     <Compile Include="Assets\Script\DragonBones\Objects\IAreaData.cs" />
+     <Compile Include="Assets\Script\DragonBones\Objects\RectangleData.cs" />
+     <Compile Include="Assets\Script\DragonBones\Objects\SkinData.cs" />
+     <Compile Include="Assets\Script\DragonBones\Objects\SlotData.cs" />
+     <Compile Include="Assets\Script\DragonBones\Objects\TImeline.cs" />
+     <Compile Include="Assets\Script\DragonBones\Objects\TransformFrame.cs" />
+     <Compile Include="Assets\Script\DragonBones\Objects\TransformTimeline.cs" />
+     <Compile Include="Assets\Script\DragonBones\Textures\ITextureAtlas.cs" />
+     <Compile Include="Assets\Script\DragonBones\Textures\TextureAtlasData.cs" />
+     <Compile Include="Assets\Script\DragonBones\Textures\TextureData.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+	   Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  
+</Project>
