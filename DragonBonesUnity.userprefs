@@ -1,12 +1,13 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Script/DragonBones/Objects/TransformTimeline.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Script/DragonBones/Animation/TimelineState.cs">
     <Files>
-      <File FileName="Assets/Script/DragonBones/Objects/DisplayData.cs" Line="11" Column="30" />
-      <File FileName="Assets/Script/DragonBones/Objects/TImeline.cs" Line="11" Column="30" />
-      <File FileName="Assets/Script/DragonBones/Objects/SlotData.cs" Line="11" Column="30" />
-      <File FileName="Assets/Script/DragonBones/Objects/TransformFrame.cs" Line="11" Column="30" />
-      <File FileName="Assets/Script/DragonBones/Objects/TransformTimeline.cs" Line="11" Column="30" />
+      <File FileName="Assets/Script/DragonBones/Core/Bone.cs" Line="1" Column="1" />
+      <File FileName="Assets/Script/DragonBones/Core/Object.cs" Line="1" Column="1" />
+      <File FileName="Assets/Script/DragonBones/Core/Slot.cs" Line="1" Column="1" />
+      <File FileName="Assets/Script/DragonBones/DragonBones.cs" Line="1" Column="1" />
+      <File FileName="Assets/Script/DragonBones/Animation/IAnimatable.cs" Line="1" Column="1" />
+      <File FileName="Assets/Script/DragonBones/Animation/TimelineState.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
