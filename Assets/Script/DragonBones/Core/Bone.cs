@@ -35,6 +35,20 @@ namespace DragonBones
 
 		public Bone ()
 		{
+			_isColorChanged = false;
+			_needUpdate = 2;
+			_tween.scaleX = _tween.scaleY = 0.f;
+			inheritRotation = true;
+			inheritScale = false;
+
+		}
+
+		public void dispose()
+		{
+
+			_boneList.Clear();
+			_slotList.Clear();
+			_timelineStateList.Clear();
 		}
 
 	
@@ -44,13 +58,172 @@ namespace DragonBones
 		
 		public	virtual void setVisible(bool vislble) ;
 
-		public	virtual void invalidUpdate();
-		public	virtual bool contains( Object obj);
-		public	virtual void addChild(Object obj);
-		public	virtual void removeChild(Object obj);
+		public	virtual void invalidUpdate()
+		{
+			_needUpdate = 2;
+		}
+		public	virtual bool contains( Object obj)
+		{
+			if (!obj)
+			{
+				// throw
+			}
+			
+			if (obj == this)
+			{
+				return false;
+			}
+			
+			Object ancestor = obj;
+			
+			while (!(ancestor == this || ancestor == null))
+			{
+				ancestor = ancestor.getParent();
+			}
+			
+			return ancestor == this;
+		}
+
+		public	virtual void addChild(Object obj)
+		{
+			if (!obj)
+			{
+				// throw
+			}
+			
+			Bone bone = obj;
+			Slot slot = obj;
+			
+			if (obj == this || (bone && bone.contains(this)))
+			{
+				//throw std::invalid_argument("An Bone cannot be added as a child to itself or one of its children (or children's children, etc.)");
+			}
+			
+			if (obj && obj.getParent())
+			{
+				object.getParent().removeChild(obj);
+			}
+			
+			if (bone)
+			{
+				_boneList.Add(bone);
+				bone.setParent(this);
+				bone.setArmature(_armature);
+			}
+			else if (slot)
+			{
+				_slotList.Add(slot);
+				slot.setParent(this);
+				slot.setArmature(_armature);
+			}
+		}
+
+		public	virtual void removeChild(Object obj)
+		{
+			if (!obj)
+			{
+				// throw
+			}
+			
+			Bone bone = (obj);
+			Slot slot = (obj);
+			
+			if (bone)
+			{
+
+				
+				if (_boneList.IndexOf(bone)>=0)
+				{
+					_boneList.Erase(bone);
+					bone.setParent(null);
+					bone.setArmature(null);
+				}
+				else
+				{
+					// throw
+				}
+			}
+			else if (slot)
+			{
+				//auto iterator = std::find(_slotList.begin(), _slotList.end(), slot);
+				
+				if (_slotList.IndexOf(slot)>=0)
+				{
+					_slotList.Erase(slot);
+					slot.setParent(null);
+					slot.setArmature(null);
+				}
+				else
+				{
+					// throw
+				}
+			}
+		}
+
 		
 	
-		protected 	virtual void update(bool needUpdate);
+		protected 	virtual void update(bool needUpdate)
+		{
+			_needUpdate --;
+			
+			if (needUpdate || _needUpdate > 0 || (_parent && _parent._needUpdate > 0))
+			{
+				_needUpdate = 1;
+			}
+			else
+			{
+				return;
+			}
+			
+			blendingTimeline();
+			global.scaleX = (origin.scaleX + _tween.scaleX) * offset.scaleX;
+			global.scaleY = (origin.scaleY + _tween.scaleY) * offset.scaleY;
+			
+			if (_parent)
+			{
+				float x = origin.x + offset.x + _tween.x;
+				float y = origin.y + offset.y + _tween.y;
+			    Matrix parentMatrix = _parent.globalTransformMatrix;
+				globalTransformMatrix.tx = global.x = parentMatrix.a * x + parentMatrix.c * y + parentMatrix.tx;
+				globalTransformMatrix.ty = global.y = parentMatrix.d * y + parentMatrix.b * x + parentMatrix.ty;
+				
+				if (inheritRotation)
+				{
+					global.skewX = origin.skewX + offset.skewX + _tween.skewX + _parent.global.skewX;
+					global.skewY = origin.skewY + offset.skewY + _tween.skewY + _parent.global.skewY;
+				}
+				else
+				{
+					global.skewX = origin.skewX + offset.skewX + _tween.skewX;
+					global.skewY = origin.skewY + offset.skewY + _tween.skewY;
+				}
+				
+				if (inheritScale)
+				{
+					global.scaleX *= _parent.global.scaleX;
+					global.scaleY *= _parent.global.scaleY;
+				}
+			}
+			else
+			{
+				globalTransformMatrix.tx = global.x = origin.x + offset.x + _tween.x;
+				globalTransformMatrix.ty = global.y = origin.y + offset.y + _tween.y;
+				global.skewX = origin.skewX + offset.skewX + _tween.skewX;
+				global.skewY = origin.skewY + offset.skewY + _tween.skewY;
+			}
+			
+			/*
+    globalTransformMatrix.a = global.scaleX * cos(global.skewY);
+    globalTransformMatrix.b = global.scaleX * sin(global.skewY);
+    globalTransformMatrix.c = -global.scaleY * sin(global.skewX);
+    globalTransformMatrix.d = global.scaleY * cos(global.skewX);
+    */
+			globalTransformMatrix.a = offset.scaleX * cos(global.skewY);
+			globalTransformMatrix.b = offset.scaleX * sin(global.skewY);
+			globalTransformMatrix.c = -offset.scaleY * sin(global.skewX);
+			globalTransformMatrix.d = offset.scaleY * cos(global.skewX);
+		}
+
 		protected virtual void updateColor(
 			int aOffset,
 			int rOffset,
@@ -61,15 +234,208 @@ namespace DragonBones
 			float gMultiplier,
 			float bMultiplier,
 			bool colorChanged
-			);
-		protected virtual void hideSlots();
-		protected virtual void arriveAtFrame(TransformFrame frame,  TimelineState timelineState, AnimationState animationState, bool isCross);
-		protected virtual void addState(TimelineState timelineState);
-		protected virtual void removeState(TimelineState timelineState);
-		protected virtual void blendingTimeline();
+			)
+		
+		{
+			for (int i = 0; i < _slotList.Count; ++i)
+			{
+				_slotList[i].updateDisplayColor(
+					aOffset, rOffset, gOffset, bOffset,
+					aMultiplier, rMultiplier, gMultiplier, bMultiplier
+					);
+			}
+			
+			_isColorChanged = colorChanged;
+		}
+
+		protected virtual void hideSlots()
+		{
+			for (int i = 0; i < _slotList.Count;  ++i)
+			{
+				_slotList[i].changeDisplay(-1);
+			}
+		}
+		protected virtual void arriveAtFrame(TransformFrame frame,  TimelineState timelineState, AnimationState animationState, bool isCross)
+		{
+			// TODO:
+			bool displayControl =
+				animationState.displayControl &&
+					(displayController.Length<=0 || displayController == animationState.name);
+			
+			//
+			if (displayControl && timelineState._weight > 0)
+			{
+				const int displayIndex = frame.displayIndex;
+				
+				for (int i = 0; i < _slotList.Count; ++i)
+				{
+					Slot slot = _slotList[i];
+					slot.changeDisplay(displayIndex);
+					slot.updateDisplayVisible(frame.visible);
+					
+					if (displayIndex >= 0)
+					{
+						if (frame.zOrder != slot._tweenZOrder)
+						{
+							slot._tweenZOrder = frame.zOrder;
+							_armature._slotsZOrderChanged = true;
+						}
+					}
+				}
+				
+				if (!frame.evt.Count<0 && _armature._eventDispatcher.hasEvent(EventData.EventType.BONE_FRAME_EVENT))
+				{
+					EventData eventData = EventData.borrowObject(EventData.EventType.BONE_FRAME_EVENT);
+					eventData.armature = _armature;
+					eventData.bone = this;
+					eventData.animationState = animationState;
+					eventData.frameLabel = frame.evt;
+					eventData.frame = frame;
+					_armature._eventDataList.Add(eventData);
+				}
+				
+				if (!frame.sound.Count<=0 && Armature.soundEventDispatcher && Armature.soundEventDispatcher.hasEvent(EventData.EventType.SOUND))
+				{
+					EventData eventData = EventData::borrowObject(EventData::EventType::SOUND);
+					eventData.armature = _armature;
+					eventData.bone = this;
+					eventData.animationState = animationState;
+					eventData.sound = frame.sound;
+					Armature.soundEventDispatcher.dispatchEvent(eventData);
+				}
+				
+				if (!frame.action.Count<=0)
+				{
+					for (int i = 0; i<= _slotList.Count;  ++i)
+					{
+						if (_slotList[i]._childArmature)
+						{
+							_slotList[i]._childArmature._animation.gotoAndPlay(frame.action);
+						}
+					}
+				}
+			}
+		}
+
+		protected virtual void addState(TimelineState timelineState)
+		{
+				
+			if (_timelineStateList.IndexOf(timelineState) <0)
+			{
+				_timelineStateList.Add(timelineState);
+				_timelineStateList.Sort( sortState);
+			}
+		}
+
+		protected virtual void removeState(TimelineState timelineState)
+		{
+
+			if (_timelineStateList.IndexOf(timelineState) >=0)
+			{
+				_timelineStateList.Remove(timelineState);
+			}
+		}
+
+		protected virtual void blendingTimeline()
+		{
+			int i = _timelineStateList.Count;
+			
+			if (i == 1)
+			{
+				TimelineState timelineState = _timelineStateList[0];
+				Transform transform = timelineState._transform;
+				Point pivot = timelineState._pivot;
+				timelineState._weight = timelineState._animationState.getCurrentWeight();
+				float weight = timelineState._weight;
+				_tween.x = transform.x * weight;
+				_tween.y = transform.y * weight;
+				_tween.skewX = transform.skewX * weight;
+				_tween.skewY = transform.skewY * weight;
+				_tween.scaleX = transform.scaleX * weight;
+				_tween.scaleY = transform.scaleY * weight;
+				_tweenPivot.x = pivot.x * weight;
+				_tweenPivot.y = pivot.y * weight;
+			}
+			else if (i > 1)
+			{
+				int prevLayer = _timelineStateList[i - 1]->_animationState->getLayer();
+				int currentLayer = 0;
+				float weigthLeft = 1f;
+				float layerTotalWeight = 0f;
+				float x = 0f;
+				float y = 0f;
+				float skewX = 0f;
+				float skewY = 0f;
+				float scaleX = 0f;
+				float scaleY = 0f;
+				float pivotX = 0f;
+				float pivotY = 0f;
+				
+				while (i--)
+				{
+					TimelineState timelineState = _timelineStateList[i];
+					currentLayer = timelineState._animationState.getLayer();
+					
+					if (prevLayer != currentLayer)
+					{
+						if (layerTotalWeight >= weigthLeft)
+						{
+							timelineState._weight = 0;
+							break;
+						}
+						else
+						{
+							weigthLeft -= layerTotalWeight;
+						}
+					}
+					
+					prevLayer = currentLayer;
+					timelineState._weight = timelineState._animationState.getCurrentWeight() * weigthLeft;
+					float weight = timelineState._weight;
+					
+					//timelineState
+					if (weight && timelineState._blendEnabled)
+					{
+						Transform transform = timelineState._transform;
+						Point pivot = timelineState._pivot;
+						x += transform.x * weight;
+						y += transform.y * weight;
+						skewX += transform.skewX * weight;
+						skewY += transform.skewY * weight;
+						scaleX += transform.scaleX * weight;
+						scaleY += transform.scaleY * weight;
+						pivotX += pivot.x * weight;
+						pivotY += pivot.y * weight;
+						layerTotalWeight += weight;
+					}
+				}
+				
+				_tween.x = x;
+				_tween.y = y;
+				_tween.skewX = skewX;
+				_tween.skewY = skewY;
+				_tween.scaleX = scaleX;
+				_tween.scaleY = scaleY;
+				_tweenPivot.x = pivotX;
+				_tweenPivot.y = pivotY;
+			}
+		}
+
 
 	 
-		protected	virtual void setArmature(Armature armature);
+		protected	virtual void setArmature(Armature armature)
+		{
+			Object.setArmature(armature);
+			
+			for (int i = 0; i <= _boneList.Count;  ++i)
+			{
+				_boneList[i].setArmature(armature);
+			}
+			
+			for (int i = 0; i <= _slotList.Count; ++i)
+			{
+				_slotList[i].setArmature(armature);
+			}
 
 
 

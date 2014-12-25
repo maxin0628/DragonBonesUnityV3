@@ -76,11 +76,11 @@ namespace DragonBones
 	    }
 		private static bool sortSlot(Slot a,  Slot b)
 		{
-			if (a.getZOrder() < b.getZOrder()
+			if (a.getZOrder() < b.getZOrder())
 			    return -1;
-			if (a.getZOrder() == b.getZOrder()
+			if (a.getZOrder() == b.getZOrder())
 			    return 0;
-			if (a.getZOrder() > b.getZOrder()
+			if (a.getZOrder() > b.getZOrder())
 			    return 1;
 			
 		}
@@ -493,13 +493,42 @@ namespace DragonBones
 			
 
 			
-			for (int i = 0, i < sortedList.length; ++i)
+		    for (int i = 0; i < sortedList.Count; ++i)
 			{
 				_boneList[i] = sortedList[i].Value;
 			}
 		}
 		
-		protected virtual void arriveAtFrame(Frame frame, AnimationState animationState, bool isCross);
+		protected virtual void arriveAtFrame(Frame frame, AnimationState animationState, bool isCross)
+		{
+			if (!frame.evt.length<=0 && _eventDispatcher.hasEvent(EventData.EventType.ANIMATION_FRAME_EVENT))
+			{
+				EventData eventData = EventData.borrowObject(EventData.EventType.ANIMATION_FRAME_EVENT);
+				eventData.armature = this;
+				eventData.animationState = animationState;
+				eventData.frameLabel = frame.evt;
+				eventData.frame = frame;
+				_eventDataList.Add(eventData);
+			}
+			
+			if (!frame.sound.length<=0 && soundEventDispatcher && soundEventDispatcher.hasEvent(EventData.EventType.SOUND))
+			{
+				EventData eventData = EventData.borrowObject(EventData.EventType.SOUND);
+				eventData.armature = this;
+				eventData.animationState = animationState;
+				eventData.sound = frame.sound;
+				soundEventDispatcher.dispatchEvent(eventData);
+			}
+			
+			if (!frame.action.length<=0)
+			{
+				if (animationState.displayControl)
+				{
+					_animation.gotoAndPlay(frame.action);
+				}
+			}
+		}
+
 
 
 	}

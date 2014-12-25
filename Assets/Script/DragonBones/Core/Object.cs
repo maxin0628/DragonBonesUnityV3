@@ -35,18 +35,55 @@ namespace DragonBones
 
 		public Object ()
 		{
+			_visible = true;
+			_armature = null;
+			_parent = null;
+			offset.scaleX = offset.scaleY = 1.f;
+			userData = null;
+
 		}
 
 	
-		public 	virtual bool getVisible();
-		public virtual void setVisible(bool vislble);
+		public 	virtual bool getVisible()
+		{
+			return _visible;
+		}
+		public virtual void setVisible(bool vislble)
+		{
+			_visible = visible;
+		}
+
 		
-		public virtual Armature getArmature();
-		public virtual Bone getParent();
+		public virtual Armature getArmature()
+		{
+			return _armature;
+		}
+		public virtual Bone getParent()
+		{
+			return _parent;
+		}
+
 		
 	
-		protected 	virtual void setArmature(Armature armature);
-		protected virtual void setParent(Bone bone);
+		protected 	virtual void setArmature(Armature armature)
+		{
+			if (_armature)
+			{
+				_armature.removeObject(this);
+			}
+			
+			_armature = armature;
+			
+			if (_armature)
+			{
+				_armature.addObject(this);
+			}
+		}
+
+		protected virtual void setParent(Bone bone)
+		{
+			_parent = bone;
+		}
 
 
 		}
