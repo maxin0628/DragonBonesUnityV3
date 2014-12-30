@@ -30,9 +30,355 @@ namespace DragonBones
 		protected Armature _childArmature;
 
 
-				public Slot ()
+		public Slot ()
+		{
+
+			_isShowDisplay = false;
+			_displayIndex = -1;
+			_originZOrder = 0f;
+			_tweenZOrder = 0f;
+			_offsetZOrder = 0f;
+			_blendMode = BlendMode.BM_NORMAL;
+			_slotData = slotData;
+			_childArmature = null;
+			_display = null;
+			inheritRotation = true;
+			inheritScale = true;
+	    }
+
+
+		public int getDisplayIndex() 
+		{
+			return _displayIndex;
+		}
+		
+		public float getZOrder() 
+		{
+			return _originZOrder + _tweenZOrder + _offsetZOrder;
+		}
+
+		public void setZOrder(float value)
+		{
+			if (getZOrder() != value)
+			{
+				_offsetZOrder = value - _originZOrder - _tweenZOrder;
+				
+				if (_armature)
 				{
+					_armature._slotsZOrderChanged = true;
 				}
+			}
+		}
+		
+		public void getDisplay() 
+		{
+			return _display;
+		}
+
+		public void setDisplay(object display, DisplayType displayType, bool disposeExisting)
+		{
+			if (_displayIndex < 0)
+			{
+				_isShowDisplay = true;
+				_displayIndex = 0;
+			}
+			
+			if (_displayIndex >= (int)(_displayList.length))
+			{
+				_displayList.resize(_displayIndex + 1);
+			}
+			
+			if (_displayList[_displayIndex].Key == display)
+			{
+				return;
+			}
+			
+			_displayList[_displayIndex].Key = display;
+			_displayList[_displayIndex].Value = displayType;
+			updateSlotDisplay(disposeExisting);
+		}
+		
+		public Armature getChildArmature()
+		{
+			return _childArmature;
+		}
+
+		public void setChildArmature(Armature childArmature, bool disposeExisting)
+		{
+			setDisplay(childArmature, DisplayType.DT_ARMATURE, disposeExisting);
+		}
+		
+		public List<KeyValuePair<object, DisplayType>> getDisplayList() 
+		{
+			return _displayList;
+		}
+
+		public void setDisplayList(List<KeyValuePair<object, DisplayType>> displayList, bool disposeExisting)
+		{
+			if (_displayIndex < 0)
+			{
+				_isShowDisplay = true;
+				_displayIndex = 0;
+			}
+			
+			if (disposeExisting)
+			{
+				disposeDisplayList();
+				_childArmature = null;
+				_display = null;
+			}
+			
+			// copy
+			_displayList = displayList;
+			int displayIndexBackup = _displayIndex;
+			_displayIndex = -1;
+			changeDisplay(displayIndexBackup);
+		}
+		
+		public void setVisible(bool visible)
+		{
+			if (_visible != visible)
+			{
+				_visible = visible;
+				updateDisplayVisible(_visible);
+			}
+		}
+		
+		public void setArmature(Armature armature)
+		{
+			Object.setArmature(armature);
+			
+			if (_armature)
+			{
+				_armature._slotsZOrderChanged = true;
+				addDisplayToContainer(_armature._display, -1);
+			}
+			else
+			{
+				removeDisplayFromContainer();
+			}
+		}
+
+
+		public void update()
+		{
+			if (_parent._needUpdate <= 0)
+			{
+				return;
+			}
+			
+			float x = origin.x + offset.x + _parent._tweenPivot.x;
+			float y = origin.y + offset.y + _parent._tweenPivot.y;
+			Matrix parentMatrix = _parent.globalTransformMatrix;
+			//globalTransformMatrix.tx = global.x = parentMatrix.a * x + parentMatrix.c * y + parentMatrix.tx;
+			//globalTransformMatrix.ty = global.y = parentMatrix.d * y + parentMatrix.b * x + parentMatrix.ty;
+			globalTransformMatrix.tx = global.x = parentMatrix.a * x * _parent.global.scaleX + parentMatrix.c * y * _parent.global.scaleY + parentMatrix.tx;
+			globalTransformMatrix.ty = global.y = parentMatrix.d * y * _parent.global.scaleY + parentMatrix.b * x * _parent.global.scaleX + parentMatrix.ty;
+			
+			if (inheritRotation)
+			{
+				global.skewX = origin.skewX + offset.skewX + _parent.global.skewX;
+				global.skewY = origin.skewY + offset.skewY + _parent.global.skewY;
+			}
+			else
+			{
+				global.skewX = origin.skewX + offset.skewX;
+				global.skewY = origin.skewY + offset.skewY;
+			}
+			
+			if (inheritScale)
+			{
+				global.scaleX = origin.scaleX * offset.scaleX * _parent.global.scaleX;
+				global.scaleY = origin.scaleY * offset.scaleY * _parent.global.scaleY;
+			}
+			else
+			{
+				global.scaleX = origin.scaleX * offset.scaleX;
+				global.scaleY = origin.scaleY * offset.scaleY;
+			}
+			
+			globalTransformMatrix.a = global.scaleX * cos(global.skewY);
+			globalTransformMatrix.b = global.scaleX * sin(global.skewY);
+			globalTransformMatrix.c = -global.scaleY * sin(global.skewX);
+			globalTransformMatrix.d = global.scaleY * cos(global.skewX);
+			updateDisplayTransform();
+		}
+
+
+		public void changeDisplay(int displayIndex)
+		{
+			if (displayIndex < 0)
+			{
+				if (_isShowDisplay)
+				{
+					_isShowDisplay = false;
+					removeDisplayFromContainer();
+					updateChildArmatureAnimation();
+				}
+			}
+			else if (!_displayList.Count<=0)
+			{
+				if (displayIndex >= (int)(_displayList.Count))
+				{
+					displayIndex = _displayList.Count - 1;
+				}
+				
+				if (_displayIndex != displayIndex)
+				{
+					_isShowDisplay = true;
+					_displayIndex = displayIndex;
+					updateSlotDisplay(false);
+					
+					if (
+						_slotData &&
+						!_slotData.displayDataList.length<=0 &&
+						_displayIndex < (int)(_slotData.displayDataList.Count)
+						)
+					{
+						origin = _slotData.displayDataList[_displayIndex].transform;
+					}
+				}
+				else if (!_isShowDisplay)
+				{
+					_isShowDisplay = true;
+					
+					if (_armature)
+					{
+						_armature._slotsZOrderChanged = true;
+						addDisplayToContainer(_armature._display, -1);
+					}
+					
+					updateChildArmatureAnimation();
+				}
+			}
+		}
+
+
+		public void updateChildArmatureAnimation()
+		{
+			if (_isShowDisplay)
+			{
+				playChildArmatureAnimation();
+			}
+			else
+			{
+				stopChildArmatureAnimation();
+			}
+		}
+
+		
+		public void playChildArmatureAnimation()
+		{
+			if (_childArmature)
+			{
+				if (
+					_armature &&
+					_armature._animation._lastAnimationState &&
+					_childArmature._animation.hasAnimation(_armature._animation._lastAnimationState.name)
+					)
+				{
+					_childArmature._animation.gotoAndPlay(_armature._animation._lastAnimationState.name);
+				}
+				else
+				{
+					_childArmature._animation.play();
+				}
+			}
+		}
+		
+		public void stopChildArmatureAnimation()
+		{
+			if (_childArmature)
+			{
+				_childArmature._animation.stop();
+				_childArmature._animation._lastAnimationState = null;
+			}
+		}
+
+
+		public void updateSlotDisplay(bool disposeExisting)
+		{
+			int currentDisplayIndex = -1;
+			
+			if (_display)
+			{
+				currentDisplayIndex = getDisplayZIndex();
+				removeDisplayFromContainer();
+			}
+			
+			if (disposeExisting)
+			{
+				if (_childArmature)
+				{
+					_childArmature.dispose();
+					delete _childArmature;
+					_childArmature = null;
+				}
+				else if (_display)
+				{
+					disposeDisplay();
+					_display = null;
+				}
+			}
+			
+			stopChildArmatureAnimation();
+			
+			void *display = _displayList[_displayIndex].Key;
+			DisplayType displayType = _displayList[_displayIndex].Value;
+			
+			if (display)
+			{
+				if (displayType == DisplayType.DT_ARMATURE)
+				{
+					_childArmature = display as Armature;
+					_display = _childArmature._display;
+				}
+				else
+				{
+					_childArmature = null;
+					_display = display;
+				}
+			}
+			else
+			{
+				_display = null;
+				_childArmature = null;
+			}
+			
+			playChildArmatureAnimation();
+			
+			updateDisplay(_display);
+			
+			if (_display)
+			{
+				if (_armature && _isShowDisplay)
+				{
+					if (currentDisplayIndex < 0)
+					{
+						_armature._slotsZOrderChanged = true;
+						addDisplayToContainer(_armature._display, currentDisplayIndex);
+					}
+					else
+					{
+						addDisplayToContainer(_armature._display, currentDisplayIndex);
+					}
+				}
+				
+				if (_blendMode != BlendMode.BM_NORMAL)
+				{
+					updateDisplayBlendMode(_blendMode);
+				}
+				else if (_slotData)
+				{
+					updateDisplayBlendMode(_slotData.blendMode);
+				}
+				
+				//updateDisplayColor();
+				updateDisplayVisible(_visible);
+				updateDisplayTransform();
+			}
+		}
+
 		}
 }
 
