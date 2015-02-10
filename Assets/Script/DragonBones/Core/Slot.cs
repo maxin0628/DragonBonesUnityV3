@@ -15,7 +15,7 @@ namespace DragonBones
 		{
 
 	
-		protected 	bool _isShowDisplay;
+		protected bool _isShowDisplay;
 		protected int _displayIndex;
 		protected float _originZOrder;
 		protected float _tweenZOrder;

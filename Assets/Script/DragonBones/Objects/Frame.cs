@@ -12,9 +12,25 @@ namespace DragonBones
 {
 		public class Frame
 		{
-				public Frame ()
-				{
-				}
+	     public enum  FrameType {FT_FRAME, FT_TRANSFORM_FRAME};  
+		 public	int position;
+		 public int duration;
+		
+		public FrameType frameType;
+		public string action;
+		public string evt;
+		public string sound;
+		public string eventParameters;
+		
+		void* eventParametersParsed;
+
+		  public Frame ()
+		  {
+			position = 0;
+			duration = 0;
+			frameType = FrameType.FT_FRAME;		
+			eventParametersParsed = null;
+		  }
 		}
 }
 

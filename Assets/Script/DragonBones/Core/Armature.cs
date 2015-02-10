@@ -47,7 +47,7 @@ namespace DragonBones
 
 		    public bool autoTween;
 
-		public Armature (ArmatureData armatureData, Animation animation, EventDispatcher eventDispatcher, void display)
+		public Armature (ArmatureData armatureData, Animation animation, EventDispatcher eventDispatcher, object display)
 		{
 
 			_armatureData = armatureData;

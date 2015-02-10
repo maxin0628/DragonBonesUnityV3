@@ -12,6 +12,13 @@ namespace DragonBones
 {
 		public interface IAreaData
 		{
+
+	
+		  public enum  AreaType {AT_ELLIPSE, AT_RECTANGLE};
+	
+		  public AreaType areaType;
+		  public string name;
+
 		}
 }
 
