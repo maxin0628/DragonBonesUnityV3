@@ -15,17 +15,39 @@ namespace DragonBones
 		public class AnimationState
 		{
 	
-		private enum  FadeState {FADE_BEFORE, FADING, FADE_COMPLETE};
+		public enum  FadeState {FADE_BEFORE, FADING, FADE_COMPLETE};
 		
 		private static List<AnimationState> _pool;
-		private static AnimationState borrowObject()
+		public static AnimationState borrowObject()
 		{
+			if (_pool.Count<=0)
+			{
+				return new AnimationState();
+			}
+			
+			AnimationState animationState = _pool[_pool.Count - 1];
+			_pool.RemoveAt(_pool.Count - 1);
+			return animationState;
 		}
-		private static void returnObject(AnimationState animationState)
+		public static void returnObject(AnimationState animationState)
 		{
+
+			if (_pool.IndexOf(animationState)<0)
+			{
+				_pool.Add(animationState);
+			}
+			
+			animationState.clear();
 		}
-		private static void clearObjects()
+		public static void clearObjects()
 		{
+			for (int i = 0; i < _pool.Count; ++i)
+			{
+				_pool[i].clear();
+				//delete _pool[i];
+			}
+			
+			_pool.Clear();
 		}
 		
 	
@@ -40,11 +62,11 @@ namespace DragonBones
 		
 	
 		private 	bool _isPlaying;
-		private bool _isComplete;
+		public bool _isComplete;
 		private bool _isFadeOut;
 		private bool _pausePlayheadInFade;
 		private int _currentPlayTimes;
-		private int _layer;
+		public int _layer;
 		private int _playTimes;
 		private int _currentTime;
 		private int _currentFrameIndex;
@@ -58,8 +80,8 @@ namespace DragonBones
 		private float _fadeCurrentTime;
 		private float _fadeTotalTime;
 		private float _fadeBeginTime;
-		private string _group;
-		private  FadeState _fadeState;
+		public string _group;
+		public  FadeState _fadeState;
 		
 		private List<TimelineState> _timelineStateList;
 		private List<string> _mixingTransforms;
@@ -70,51 +92,726 @@ namespace DragonBones
 
 		public AnimationState ()
 		{
+			_clip = null;
+			_armature = null;
 		}
 
 	
-		public 	bool getIsComplete() ;
-		public bool getIsPlaying() ;
-		public int getCurrentPlayTimes() ;
-		public int getLayer() ;
-		public float getTotalTime() ;
-		public float getCurrentWeight() ;
-		public  string getGroup() ;
-		public  AnimationData getClip() ;
+		public bool getIsComplete() 
+		{
+			return _isComplete;
+		}
+
+		public bool getIsPlaying() 
+		{
+			return (_isPlaying && !_isComplete);
+		}
+
+		public int getCurrentPlayTimes()
+		{
+			return _currentPlayTimes < 0 ? 0 : _currentPlayTimes;
+		}
+
+		public int getLayer() 
+		{
+			return _layer;
+		}
+
+		public float getTotalTime() 
+		{
+			return _totalTime * 0.001f;
+		}
+
+		public float getCurrentWeight() 
+		{
+			return _fadeWeight * weight;
+		}
+
+		public string getGroup() 
+		{
+			return _group;
+		}
+
+		public AnimationData getClip() 
+		{
+			return _clip;
+		}
+
+		public AnimationState setAdditiveBlending(bool value)
+		{
+			additiveBlending = value;
+			return this;
+		}
+
+		public AnimationState setAutoFadeOut(bool value, float fadeOutTime_)
+		{
+			autoFadeOut = value;
+			
+			if (fadeOutTime_ >= 0)
+			{
+				fadeOutTime = fadeOutTime_;
+			}
+			
+			return this;
+		}
+
+		public AnimationState setWeight(float value)
+		{
+			weight = value;
+			return this;
+		}
+
+
+		public AnimationState setFrameTween(bool autoTween_, bool lastFrameAutoTween_)
+		{
+			autoTween = autoTween_;
+			lastFrameAutoTween = lastFrameAutoTween_;
+			return this;
+		}
+		public int getPlayTimes() 
+		{
+			return _playTimes;
+		}
+
+		public AnimationState setPlayTimes(int playTimes)
+		{
+			_playTimes = playTimes;
+			
+			if (Math.Round(_totalTime * 0.001f * _clip.frameRate) < 2)
+			{
+				_playTimes = playTimes < 0 ? -1 : 1;
+			}
+			else
+			{
+				_playTimes = playTimes < 0 ? -playTimes : playTimes;
+			}
+			
+			autoFadeOut = playTimes < 0 ? true : false;
+			return this;
+		}
+		public float getCurrentTime() 
+		{
+			return _currentTime < 0 ? 0.f : _currentTime * 0.001f;
+		}
+		public AnimationState setCurrentTime(float currentTime)
+		{
+			if (currentTime < 0 || currentTime != currentTime)
+			{
+				currentTime = 0.f;
+			}
+			
+			_time = currentTime;
+			_currentTime = (int)(_time * 1000.f);
+			return this;
+		}
 		
-		public AnimationState setAdditiveBlending(bool value);
-		public AnimationState setAutoFadeOut(bool value, float fadeOutTime = -1);
-		public AnimationState setWeight(float value);
-		public AnimationState setFrameTween(bool autoTween_, bool lastFrameAutoTween_);
-		
-		public int getPlayTimes() ;
-		public AnimationState setPlayTimes(int playTimes);
-		public float getCurrentTime() ;
-		public AnimationState setCurrentTime(float currentTime);
-		public float getTimeScale() ;
-		public AnimationState setTimeScale(float timeScale);
+		public float getTimeScale() 
+		{
+			return _timeScale;
+		}
+		public AnimationState setTimeScale(float timeScale)
+		{
+			if (timeScale != timeScale)
+			{
+				timeScale = 1.f;
+			}
+			
+			_timeScale = timeScale;
+			return this;
+		}
 
+		public void fadeIn(Armature armature, AnimationData clip, float fadeTotalTime, float timeScale, int playTimes, bool pausePlayhead)
+		{
+			_armature = armature;
+			_clip = clip;
+			_pausePlayheadInFade = pausePlayhead;
+			_totalTime = _clip.duration;
+			autoTween = _clip.autoTween;
+			name = _clip.name;
+			setTimeScale(timeScale);
+			setPlayTimes(playTimes);
+			// reset
+			_isComplete = false;
+			_currentFrameIndex = -1;
+			_currentPlayTimes = -1;
+			
+			if (Math.Round(_totalTime * 0.001f * _clip.frameRate) < 2)
+			{
+				_currentTime = _totalTime;
+			}
+			else
+			{
+				_currentTime = -1;
+			}
+			
+			_time = 0.f;
+			_mixingTransforms.clear();
+			// fade start
+			_isFadeOut = false;
+			_fadeWeight = 0.f;
+			_fadeTotalWeight = 1.f;
+			_fadeCurrentTime = 0.f;
+			_fadeBeginTime = _fadeCurrentTime;
+			_fadeTotalTime = fadeTotalTime * _timeScale;
+			_fadeState = FadeState.FADE_BEFORE;
+			// default
+			_isPlaying = true;
+			displayControl = true;
+			lastFrameAutoTween = true;
+			additiveBlending = false;
+			weight = 1.f;
+			fadeOutTime = fadeTotalTime;
+			updateTimelineStates();
+		}
 
-		public AnimationState fadeOut(float fadeTotalTime, bool pausePlayhead);
-		public AnimationState play();
-		public AnimationState stop();
-		public bool getMixingTransform(string timelineName) ;
-		public AnimationState addMixingTransform(string timelineName, bool recursive = true);
-		public AnimationState removeMixingTransform(string timelineName, bool recursive = true);
-		public AnimationState removeAllMixingTransform();
+		public AnimationState fadeOut(float fadeTotalTime, bool pausePlayhead)
+		{
+			if (!(fadeTotalTime >= 0))
+			{
+				fadeTotalTime = 0.f;
+			}
+			
+			_pausePlayheadInFade = pausePlayhead;
+			
+			if (_isFadeOut)
+			{
+				if (fadeTotalTime > _fadeTotalTime / _timeScale - (_fadeCurrentTime - _fadeBeginTime))
+				{
+					return this;
+				}
+			}
+			else
+			{
+				for (int i = 0; i < _timelineStateList.Count;  ++i)
+				{
+					_timelineStateList[i].fadeOut();
+				}
+			}
+			
+			// fade start
+			_isFadeOut = true;
+			_fadeTotalWeight = _fadeWeight;
+			_fadeState = FadeState.FADE_BEFORE;
+			_fadeBeginTime = _fadeCurrentTime;
+			_fadeTotalTime = _fadeTotalWeight >= 0 ? fadeTotalTime * _timeScale : 0.f;
+			// default
+			displayControl = false;
+			return this;
+		}
+		public AnimationState play()
+		{
+			_isPlaying = true;
+			return this;
+		}
 
+		public AnimationState stop()
+		{
+			_isPlaying = false;
+			return this;
+		}
+
+		public bool getMixingTransform(string timelineName) 
+		{
+
+			return (_mixingTransforms.IndexOf(timelineName)>=0);
+		}
+
+		public AnimationState addMixingTransform(string timelineName, bool recursive)
+		{
+			if (recursive)
+			{
+				Bone currentBone = null;
+				
+				// From root to leaf
+				for (int i = _armature.getBones().Count; i>=0; i--)
+				{
+					Bone bone = _armature.getBones()[i];
+					string boneName = bone.name;
+					
+					if (boneName == timelineName)
+					{
+						currentBone = bone;
+					}
+					
+					if (
+						currentBone &&
+						(currentBone == bone || currentBone.contains(bone)) &&
+						_clip.getTimeline(boneName) &&
+						_mixingTransforms.IndexOf (boneName) < 0 
+						)
+					{
+						_mixingTransforms.Add(boneName);
+					}
+				}
+			}
+			else if (
+				_clip.getTimeline(timelineName) &&
+				_mixingTransforms.IndexOf (timelineName) < 0
+				)
+			{
+				_mixingTransforms.Add(timelineName);
+			}
+			
+			updateTimelineStates();
+			return this;
+		}
+
+		public AnimationState removeMixingTransform(string timelineName, bool recursive)
+		{
+			if (recursive)
+			{
+				Bone currentBone = null;
+				
+				// From root to leaf
+				for (int i = _armature.getBones().Count; i>=0; i--)
+				{
+					Bone bone = _armature.getBones()[i];
+					
+					if (bone.name == timelineName)
+					{
+						currentBone = bone;
+					}
+					
+					if (currentBone && (currentBone == bone || currentBone.contains(bone)))
+					{
+
+						if (_mixingTransforms.IndexOf(bone.name) >= 0 )
+						{
+							_mixingTransforms.Remove(bone.name);
+						}
+					}
+				}
+			}
+			else
+			{
+
+				if (_mixingTransforms.IndexOf(timelineName)>=0)
+				{
+					_mixingTransforms.Remove(timelineName);
+				}
+			}
+			
+			updateTimelineStates();
+			return this;
+		}
+
+		public AnimationState removeAllMixingTransform()
+		{
+			_mixingTransforms.RemoveAll();
+			updateTimelineStates();
+			return this;
+		}
 	
-		private 	void fadeIn(Armature *armature, AnimationData *clip, float fadeTotalTime, float timeScale, int playTimes, bool pausePlayhead);
-		
-		private bool advanceTime(float passedTime);
-		private void updateTimelineStates();
-		private void addTimelineState(string timelineName);
-		private void removeTimelineState(TimelineState timelineState);
-		private void advanceFadeTime(float passedTime);
-		private void advanceTimelinesTime(float passedTime);
-		private void updateMainTimeline(bool isThisComplete);
-		private void hideBones();
-		private void clear();
+		public bool advanceTime(float passedTime)
+		{
+			passedTime *= _timeScale;
+			advanceFadeTime(passedTime);
+			
+			if (_fadeWeight)
+			{
+				advanceTimelinesTime(passedTime);
+			}
+			
+			return _isFadeOut && _fadeState == FadeState.FADE_COMPLETE;
+		}
+
+		public void updateTimelineStates()
+		{
+			for (int i = _timelineStateList.Count; i>=0; i--)
+			{
+				TimelineState timelineState = _timelineStateList[i];
+				
+				if (!_armature.getBone(timelineState.name))
+				{
+					removeTimelineState(timelineState);
+				}
+			}
+			
+			if (_mixingTransforms.Count<=0)
+			{
+				for (int i = 0; i < _clip.timelineList.Count;  ++i)
+				{
+					addTimelineState(_clip.timelineList[i].name);
+				}
+			}
+			else
+			{
+				for (int i = _timelineStateList.Count; i>=0; i--)
+				{
+					TimelineState timelineState = _timelineStateList[i];
+
+ 					if (_mixingTransforms.IndexOf(timelineState.name) <0 )
+					{
+						removeTimelineState(timelineState);
+					}
+				}
+				
+				for (int i = 0; i < _mixingTransforms.Count; ++i)
+				{
+					addTimelineState(_mixingTransforms[i]);
+				}
+			}
+		}
+
+		public void addTimelineState(string timelineName)
+		{
+			Bone bone = _armature.getBone(timelineName);
+			
+			if (bone)
+			{
+				for (int i = 0; i < _timelineStateList.Count;  ++i)
+				{
+					if (_timelineStateList[i].name == timelineName)
+					{
+						return;
+					}
+				}
+				
+				TimelineState timelineState = TimelineState.borrowObject();
+				timelineState.fadeIn(bone, this, _clip.getTimeline(timelineName));
+				_timelineStateList.Add(timelineState);
+			}
+		}
+
+		public void removeTimelineState(TimelineState timelineState)
+		{
+
+			if (_timelineStateList.IndexOf(timelineState) >= 0)
+			{
+				TimelineState.returnObject(timelineState);
+				_timelineStateList.Remove(timelineState);
+			}
+		}
+
+		public void advanceFadeTime(float passedTime)
+		{
+			bool fadeStartFlg = false;
+			bool fadeCompleteFlg = false;
+			
+			if (_fadeBeginTime >= 0)
+			{
+				FadeState fadeState = _fadeState;
+				_fadeCurrentTime += passedTime < 0 ? -passedTime : passedTime;
+				
+				if (_fadeCurrentTime >= _fadeBeginTime + _fadeTotalTime)
+				{
+					// fade complete
+					if (_fadeWeight == 1 || _fadeWeight == 0)
+					{
+						fadeState = FadeState.FADE_COMPLETE;
+						
+						if (_pausePlayheadInFade)
+						{
+							_pausePlayheadInFade = false;
+							_currentTime = -1;
+						}
+					}
+					
+					_fadeWeight = _isFadeOut ? 0.f : 1.f;
+				}
+				else if (_fadeCurrentTime >= _fadeBeginTime)
+				{
+					// fading
+					fadeState = FadeState.FADING;
+					_fadeWeight = (_fadeCurrentTime - _fadeBeginTime) / _fadeTotalTime * _fadeTotalWeight;
+					
+					if (_isFadeOut)
+					{
+						_fadeWeight = _fadeTotalWeight - _fadeWeight;
+					}
+				}
+				else
+				{
+					// fade before
+					fadeState = FadeState.FADE_BEFORE;
+					_fadeWeight = _isFadeOut ? 1.f : 0.f;
+				}
+				
+				if (_fadeState != fadeState)
+				{
+					// _fadeState == FadeState::FADE_BEFORE && (fadeState == FadeState::FADING || fadeState == FadeState::FADE_COMPLETE)
+					if (_fadeState == FadeState.FADE_BEFORE)
+					{
+						fadeStartFlg = true;
+					}
+					
+					// (_fadeState == FadeState::FADE_BEFORE || _fadeState == FadeState::FADING) && fadeState == FadeState::FADE_COMPLETE
+					if (fadeState == FadeState.FADE_COMPLETE)
+					{
+						fadeCompleteFlg = true;
+					}
+					
+					_fadeState = fadeState;
+				}
+			}
+			
+			if (fadeStartFlg)
+			{
+				EventData.EventType eventDataType;
+				
+				if (_isFadeOut)
+				{
+					eventDataType = EventData.EventType.FADE_OUT;
+				}
+				else
+				{
+					hideBones();
+					eventDataType = EventData.EventType.FADE_IN;
+				}
+				
+				if (_armature._eventDispatcher.HasEvent(eventDataType))
+				{
+					EventData eventData = EventData.borrowObject(eventDataType);
+					eventData.armature = _armature;
+					eventData.animationState = this;
+					_armature._eventDataList.Add(eventData);
+				}
+			}
+			
+			if (fadeCompleteFlg)
+			{
+				EventData.EventType eventDataType;
+				
+				if (_isFadeOut)
+				{
+					eventDataType = EventData.EventType.FADE_OUT_COMPLETE;
+				}
+				else
+				{
+					eventDataType = EventData.EventType.FADE_IN_COMPLETE;
+				}
+				
+				if (_armature._eventDispatcher.HasEvent(eventDataType))
+				{
+					EventData eventData = EventData.borrowObject(eventDataType);
+					eventData.armature = _armature;
+					eventData.animationState = this;
+					_armature._eventDataList.Add(eventData);
+				}
+			}
+		}
+
+
+		public void advanceTimelinesTime(float passedTime)
+		{
+			if (_isPlaying && !_pausePlayheadInFade)
+			{
+				_time += passedTime;
+			}
+			
+			bool startFlg = false;
+			bool completeFlg = false;
+			bool loopCompleteFlg = false;
+			bool isThisComplete = false;
+			int currentPlayTimes = 0;
+			int currentTime = (int)(_time * 1000.f);
+			
+			if (_playTimes == 0)
+			{
+				isThisComplete = false;
+				currentPlayTimes = (int)(Math.Ceiling(Math.Abs(currentTime) / (float)(_totalTime)));
+				currentTime -= (int)(Math.Floor(currentTime / (float)(_totalTime))) * _totalTime;
+				
+				if (currentTime < 0)
+				{
+					currentTime += _totalTime;
+				}
+			}
+			else
+			{
+				int totalTimes = _playTimes * _totalTime;
+				
+				if (currentTime >= totalTimes)
+				{
+					currentTime = totalTimes;
+					isThisComplete = true;
+				}
+				else if (currentTime <= -totalTimes)
+				{
+					currentTime = -totalTimes;
+					isThisComplete = true;
+				}
+				else
+				{
+					isThisComplete = false;
+				}
+				
+				if (currentTime < 0)
+				{
+					currentTime += totalTimes;
+				}
+				
+				currentPlayTimes = (int)(Math.Ceiling(currentTime / (float)(_totalTime)));
+				currentTime -= (int)(Math.Floor(currentTime / (float)(_totalTime))) * _totalTime;
+				
+				if (isThisComplete)
+				{
+					currentTime = _totalTime;
+				}
+			}
+			
+			if (currentPlayTimes == 0)
+			{
+				currentPlayTimes = 1;
+			}
+			
+			// update timeline
+			_isComplete = isThisComplete;
+			float progress = _time * 1000.f / (float)(_totalTime);
+			
+			for (int i = 0; i < _timelineStateList.Count;  ++i)
+			{
+				_timelineStateList[i].update(progress);
+				_isComplete = _timelineStateList[i]._isComplete && _isComplete;
+			}
+			
+			// update main timeline
+			if (_currentTime != currentTime)
+			{
+				if (_currentPlayTimes != currentPlayTimes)    // check loop complete
+				{
+					if (_currentPlayTimes > 0 && currentPlayTimes > 1)
+					{
+						loopCompleteFlg = true;
+					}
+					
+					_currentPlayTimes = currentPlayTimes;
+				}
+				
+				if (_currentTime < 0 && !_pausePlayheadInFade)    // check start
+				{
+					startFlg = true;
+				}
+				
+				if (_isComplete)    // check complete
+				{
+					completeFlg = true;
+				}
+				
+				_currentTime = currentTime;
+				updateMainTimeline(isThisComplete);
+			}
+			
+			if (startFlg)
+			{
+				if (_armature._eventDispatcher.HasEvent(EventData.EventType.START))
+				{
+					EventData eventData = EventData.borrowObject(EventData.EventType.START);
+					eventData.armature = _armature;
+					eventData.animationState = this;
+					_armature._eventDataList.Add(eventData);
+				}
+			}
+			
+			if (completeFlg)
+			{
+				if (_armature._eventDispatcher.HasEvent(EventData.EventType.COMPLETE))
+				{
+					EventData eventData = EventData.borrowObject(EventData.EventType.COMPLETE);
+					eventData.armature = _armature;
+					eventData.animationState = this;
+					_armature._eventDataList.Add(eventData);
+				}
+				
+				if (autoFadeOut)
+				{
+					fadeOut(fadeOutTime, true);
+				}
+			}
+			else if (loopCompleteFlg)
+			{
+				if (_armature._eventDispatcher.HasEvent(EventData.EventType.LOOP_COMPLETE))
+				{
+					EventData eventData = EventData.borrowObject(EventData.EventType.LOOP_COMPLETE);
+					eventData.armature = _armature;
+					eventData.animationState = this;
+					_armature._eventDataList.Add(eventData);
+				}
+			}
+		}
+
+		public void updateMainTimeline(bool isThisComplete)
+		{
+			if (!_clip.frameList.Count <=0)
+			{
+				Frame prevFrame = null;
+				Frame currentFrame = null;
+				
+				for (int i = 0; i < _clip.frameList.Count;  ++i)
+				{
+					if (_currentFrameIndex < 0)
+					{
+						_currentFrameIndex = 0;
+					}
+					else if (_currentTime < _currentFramePosition || _currentTime >= _currentFramePosition + _currentFrameDuration)
+					{
+						++_currentFrameIndex;
+						
+						if (_currentFrameIndex >= (int)(i))
+						{
+							if (isThisComplete)
+							{
+								--_currentFrameIndex;
+								break;
+							}
+							else
+							{
+								_currentFrameIndex = 0;
+							}
+						}
+					}
+					else
+					{
+						break;
+					}
+					
+					currentFrame = _clip.frameList[_currentFrameIndex];
+					
+					if (prevFrame)
+					{
+						_armature.arriveAtFrame(prevFrame, this, true);
+					}
+					
+					_currentFrameDuration = currentFrame.duration;
+					_currentFramePosition = currentFrame.position;
+					prevFrame = currentFrame;
+				}
+				
+				if (currentFrame)
+				{
+					_armature.arriveAtFrame(currentFrame, this, false);
+				}
+			}
+		}
+
+
+		public void hideBones()
+		{
+			for (int i = 0; i < _clip.hideTimelineList.Count;  ++i)
+			{
+				Bone bone = _armature.getBone(_clip.hideTimelineList[i]);
+				
+				if (bone)
+				{
+					bone.hideSlots();
+				}
+			}
+		}
+
+
+		public void clear()
+		{
+			// reverse delete
+			for (int i = _timelineStateList.Count; i>=0; i--)
+			{
+				TimelineState.returnObject(_timelineStateList[i]);
+			}
+			
+			_timelineStateList.RemoveAll();
+			_mixingTransforms.RemoveAll();
+			_armature = null;
+			_clip = null;
+		}
 
 
 

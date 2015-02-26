@@ -11,7 +11,7 @@ using System;
 using Com.Viperstudio.Geom;
 namespace DragonBones
 {
-		public class TransformFrame
+		public class TransformFrame: Frame
 		{
 	
 		public bool visible;
@@ -26,7 +26,7 @@ namespace DragonBones
 		public Transform transform;
 		public Point pivot;
 		public Point scaleOffset;
-		public ColorTransform *color;
+		public ColorTransform color;
 
 
 		public TransformFrame ()
@@ -36,8 +36,8 @@ namespace DragonBones
 			tweenRotate = 0;
 			displayIndex = 0;
 			zOrder = 0.f;
-			tweenEasing = NO_TWEEN_EASING;
-			frameType = FrameType.FT_TRANSFORM_FRAME;
+			tweenEasing = DragonBones.NO_TWEEN_EASING;
+			frameType = Frame.FrameType.FT_TRANSFORM_FRAME;
 			color = null;
 
 	    }

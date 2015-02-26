@@ -11,14 +11,14 @@ using System;
 using System.Collections.Generic;
 namespace DragonBones
 {
-		public class TImeline
+		public class Timeline
 		{
 
 	
 		public int duration;
 		public float scale;
 		public List<Frame> frameList;
-	    public TImeline ()
+	    public Timeline ()
 		{
 			duration = 0;
 			scale = 1.f;

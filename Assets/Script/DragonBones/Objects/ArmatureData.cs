@@ -72,7 +72,7 @@ namespace DragonBones
 				return null;
 			}
 			
-			if (skinName.Count <= 0 )
+			if (skinName.Length <= 0 )
 			{
 				return skinDataList[0];
 			}

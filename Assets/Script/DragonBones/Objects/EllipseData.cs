@@ -11,12 +11,13 @@ using System;
 using Com.Viperstudio.Geom;
 namespace DragonBones
 {
-		public class EllipseData
+		public class EllipseData:IAreaData
 		{
 
 		public float width;
 		public float height;
-		
+
+
 		public Transform transform;
 		public Point pivot;
 		
@@ -25,7 +26,7 @@ namespace DragonBones
 
 		public EllipseData ()
 	    {
-			areaType = IAreaData::AreaType.AT_ELLIPSE;
+			areaType = IAreaData.AreaType.AT_ELLIPSE;
 			width = 0.f;
 			height = 0.f;
 		}

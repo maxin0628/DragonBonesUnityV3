@@ -9,28 +9,30 @@
 // ------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using Com.Viperstudio.Geom;
 namespace DragonBones
 {
-		public class Slot
+		public class Slot :DBObject
 		{
 
 	
-		protected bool _isShowDisplay;
+		public bool _isShowDisplay;
 		protected int _displayIndex;
-		protected float _originZOrder;
-		protected float _tweenZOrder;
-		protected float _offsetZOrder;
+		public float _originZOrder;
+		public float _tweenZOrder;
+		public float _offsetZOrder;
 		protected DragonBones.BlendMode _blendMode;
-		
+		protected ColorTransform _colorTransform;
+
 		// <displayOrArmature*, DisplayType>
 		protected List<KeyValuePair<object, DisplayType>> _displayList;
 		
 		protected SlotData _slotData;
-		protected object _display;
-		protected Armature _childArmature;
+		public object _display;
+		public Armature _childArmature;
 
 
-		public Slot ()
+		public Slot (SlotData slotData)
 		{
 
 			_isShowDisplay = false;
@@ -38,7 +40,7 @@ namespace DragonBones
 			_originZOrder = 0f;
 			_tweenZOrder = 0f;
 			_offsetZOrder = 0f;
-			_blendMode = BlendMode.BM_NORMAL;
+			_blendMode = DragonBones.BlendMode.BM_NORMAL;
 			_slotData = slotData;
 			_childArmature = null;
 			_display = null;
@@ -75,7 +77,7 @@ namespace DragonBones
 			return _display;
 		}
 
-		public void setDisplay(object display, DisplayType displayType, bool disposeExisting)
+		public void setDisplay(object display, DragonBones.DisplayType displayType, bool disposeExisting)
 		{
 			if (_displayIndex < 0)
 			{
@@ -83,9 +85,9 @@ namespace DragonBones
 				_displayIndex = 0;
 			}
 			
-			if (_displayIndex >= (int)(_displayList.length))
+			if (_displayIndex >= (int)(_displayList.Count))
 			{
-				_displayList.resize(_displayIndex + 1);
+				_displayList.Count = (_displayIndex + 1);
 			}
 			
 			if (_displayList[_displayIndex].Key == display)
@@ -105,7 +107,7 @@ namespace DragonBones
 
 		public void setChildArmature(Armature childArmature, bool disposeExisting)
 		{
-			setDisplay(childArmature, DisplayType.DT_ARMATURE, disposeExisting);
+			setDisplay(childArmature, DragonBones.DisplayType.DT_ARMATURE, disposeExisting);
 		}
 		
 		public List<KeyValuePair<object, DisplayType>> getDisplayList() 
@@ -146,7 +148,7 @@ namespace DragonBones
 		
 		public void setArmature(Armature armature)
 		{
-			Object.setArmature(armature);
+			DBObject.setArmature(armature);
 			
 			if (_armature)
 			{
@@ -167,40 +169,40 @@ namespace DragonBones
 				return;
 			}
 			
-			float x = origin.x + offset.x + _parent._tweenPivot.x;
-			float y = origin.y + offset.y + _parent._tweenPivot.y;
+			float x = origin.X + offset.X + _parent._tweenPivot.x;
+			float y = origin.Y + offset.Y + _parent._tweenPivot.y;
 			Matrix parentMatrix = _parent.globalTransformMatrix;
 			//globalTransformMatrix.tx = global.x = parentMatrix.a * x + parentMatrix.c * y + parentMatrix.tx;
 			//globalTransformMatrix.ty = global.y = parentMatrix.d * y + parentMatrix.b * x + parentMatrix.ty;
-			globalTransformMatrix.tx = global.x = parentMatrix.a * x * _parent.global.scaleX + parentMatrix.c * y * _parent.global.scaleY + parentMatrix.tx;
-			globalTransformMatrix.ty = global.y = parentMatrix.d * y * _parent.global.scaleY + parentMatrix.b * x * _parent.global.scaleX + parentMatrix.ty;
+			globalTransformMatrix.Tx = global.X = parentMatrix.A * x * _parent.global.ScaleX + parentMatrix.C * y * _parent.global.ScaleY + parentMatrix.Tx;
+			globalTransformMatrix.Ty = global.Y = parentMatrix.D * y * _parent.global.ScaleY + parentMatrix.B * x * _parent.global.ScaleX + parentMatrix.Ty;
 			
 			if (inheritRotation)
 			{
-				global.skewX = origin.skewX + offset.skewX + _parent.global.skewX;
-				global.skewY = origin.skewY + offset.skewY + _parent.global.skewY;
+				global.SkewX = origin.SkewX + offset.SkewX + _parent.global.SkewX;
+				global.SkewY = origin.SkewY + offset.SkewY + _parent.global.SkewY;
 			}
 			else
 			{
-				global.skewX = origin.skewX + offset.skewX;
-				global.skewY = origin.skewY + offset.skewY;
+				global.SkewX = origin.SkewX + offset.SkewX;
+				global.SkewY = origin.SkewY + offset.SkewY;
 			}
-			
+
 			if (inheritScale)
 			{
-				global.scaleX = origin.scaleX * offset.scaleX * _parent.global.scaleX;
-				global.scaleY = origin.scaleY * offset.scaleY * _parent.global.scaleY;
+				global.ScaleX = origin.ScaleX * offset.ScaleX * _parent.global.ScaleX;
+				global.ScaleY = origin.ScaleY * offset.ScaleY * _parent.global.ScaleY;
 			}
 			else
 			{
-				global.scaleX = origin.scaleX * offset.scaleX;
-				global.scaleY = origin.scaleY * offset.scaleY;
+				global.ScaleX = origin.ScaleX * offset.ScaleX;
+				global.ScaleY = origin.ScaleY * offset.ScaleY;
 			}
 			
-			globalTransformMatrix.a = global.scaleX * cos(global.skewY);
-			globalTransformMatrix.b = global.scaleX * sin(global.skewY);
-			globalTransformMatrix.c = -global.scaleY * sin(global.skewX);
-			globalTransformMatrix.d = global.scaleY * cos(global.skewX);
+			globalTransformMatrix.A = global.ScaleX * Math.Cos(global.SkewY);
+			globalTransformMatrix.B = global.ScaleX * Math.Sin(global.SkewY);
+			globalTransformMatrix.C = -global.ScaleY * Math.Sin(global.SkewX);
+			globalTransformMatrix.D = global.ScaleY * Math.Cos(global.SkewX);
 			updateDisplayTransform();
 		}
 
@@ -231,7 +233,7 @@ namespace DragonBones
 					
 					if (
 						_slotData &&
-						!_slotData.displayDataList.length<=0 &&
+						!_slotData.displayDataList.Count<=0 &&
 						_displayIndex < (int)(_slotData.displayDataList.Count)
 						)
 					{
@@ -311,7 +313,7 @@ namespace DragonBones
 				if (_childArmature)
 				{
 					_childArmature.dispose();
-					delete _childArmature;
+					//delete _childArmature;
 					_childArmature = null;
 				}
 				else if (_display)
@@ -323,12 +325,12 @@ namespace DragonBones
 			
 			stopChildArmatureAnimation();
 			
-			void *display = _displayList[_displayIndex].Key;
-			DisplayType displayType = _displayList[_displayIndex].Value;
+			Object display = _displayList[_displayIndex].Key;
+			DragonBones.DisplayType displayType = _displayList[_displayIndex].Value;
 			
 			if (display)
 			{
-				if (displayType == DisplayType.DT_ARMATURE)
+				if (displayType == DragonBones.DisplayType.DT_ARMATURE)
 				{
 					_childArmature = display as Armature;
 					_display = _childArmature._display;
@@ -364,7 +366,7 @@ namespace DragonBones
 					}
 				}
 				
-				if (_blendMode != BlendMode.BM_NORMAL)
+				if (_blendMode != DragonBones.BlendMode.BM_NORMAL)
 				{
 					updateDisplayBlendMode(_blendMode);
 				}
@@ -373,11 +375,65 @@ namespace DragonBones
 					updateDisplayBlendMode(_slotData.blendMode);
 				}
 				
-				//updateDisplayColor();
+				updateDisplayColor(
+					_colorTransform.AlphaOffset, _colorTransform.RedOffset, _colorTransform.GreenOffset, _colorTransform.BlueOffset,
+					_colorTransform.AlphaMultiplier, _colorTransform.RedMultiplier, _colorTransform.GreenMultiplier, _colorTransform.BlueMultiplier
+					);
 				updateDisplayVisible(_visible);
 				updateDisplayTransform();
 			}
 		}
+
+		public void updateDisplayColor(int aOffset, int rOffset, int gOffset, int bOffset, float aMultiplier, float rMultiplier, float gMultiplier, float bMultiplier)
+		{
+			_colorTransform.AlphaOffset = aOffset;
+			_colorTransform.RedOffset = rOffset;
+			_colorTransform.GreenOffset = gOffset;
+			_colorTransform.BlueOffset = bOffset;
+			_colorTransform.AlphaMultiplier = aMultiplier;
+			_colorTransform.RedMultiplier = rMultiplier;
+			_colorTransform.GreenMultiplier = gMultiplier;
+			_colorTransform.BlueMultiplier = bMultiplier;
+		}
+
+		protected virtual int getDisplayZIndex()
+		{
+			return 0;
+		}
+
+		public virtual void addDisplayToContainer(Object container, int zIndex) 
+		{
+
+		}
+		public virtual void removeDisplayFromContainer()
+		{
+
+		}
+		protected virtual void disposeDisplay()
+		{
+
+		}
+		protected virtual void disposeDisplayList()
+		{
+
+		}
+		public virtual void updateDisplay(Object display)
+		{
+
+		}
+		protected virtual void updateDisplayBlendMode(DragonBones.BlendMode blendMode)
+		{
+
+		}
+		public virtual void updateDisplayVisible(bool visible)
+		{
+
+		}
+		protected virtual void updateDisplayTransform()
+		{
+
+		}
+
 
 		}
 }

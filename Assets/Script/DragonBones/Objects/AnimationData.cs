@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace DragonBones
 {
 
-	public class AnimationData  {
+	public class AnimationData: Timeline  {
 
 	    public	bool autoTween;
 		public	int frameRate;
@@ -18,7 +18,7 @@ namespace DragonBones
 		public List<TransformTimeline> timelineList;
 		public List<string> hideTimelineList;
 
-		public TransformTimeline getTimeLine(string timelineName)
+		public TransformTimeline getTimeline(string timelineName)
 		{
 			for (int i = 0, l = timelineList.Count; i < l; ++i)
 			{

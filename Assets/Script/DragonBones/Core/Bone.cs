@@ -13,7 +13,7 @@ using Com.Viperstudio.Geom;
 
 namespace DragonBones
 {
-		public class Bone
+		public class Bone: DBObject
 		{
 
 	
@@ -23,10 +23,10 @@ namespace DragonBones
 		  public string displayController;
 		
 	
-	protected	bool _isColorChanged;
-	protected int _needUpdate;
+	     public bool _isColorChanged;
+	     public int _needUpdate;
 		
-		protected Point _tweenPivot;
+		public Point _tweenPivot;
 		protected Transform _tween;
 		protected List<Bone> _boneList;
 		protected List<Slot> _slotList;
@@ -37,7 +37,7 @@ namespace DragonBones
 		{
 			_isColorChanged = false;
 			_needUpdate = 2;
-			_tween.scaleX = _tween.scaleY = 0.f;
+			_tween.ScaleX = _tween.ScaleY = 0.f;
 			inheritRotation = true;
 			inheritScale = false;
 
@@ -62,7 +62,7 @@ namespace DragonBones
 		{
 			_needUpdate = 2;
 		}
-		public	virtual bool contains( Object obj)
+		public	virtual bool contains( DBObject obj)
 		{
 			if (!obj)
 			{
@@ -74,7 +74,7 @@ namespace DragonBones
 				return false;
 			}
 			
-			Object ancestor = obj;
+			DBObject ancestor = obj;
 			
 			while (!(ancestor == this || ancestor == null))
 			{
@@ -84,7 +84,7 @@ namespace DragonBones
 			return ancestor == this;
 		}
 
-		public	virtual void addChild(Object obj)
+		public	virtual void addChild(DBObject obj)
 		{
 			if (!obj)
 			{
@@ -98,10 +98,10 @@ namespace DragonBones
 			{
 				//throw std::invalid_argument("An Bone cannot be added as a child to itself or one of its children (or children's children, etc.)");
 			}
-			
+
 			if (obj && obj.getParent())
 			{
-				object.getParent().removeChild(obj);
+				obj.getParent().removeChild(obj);
 			}
 			
 			if (bone)
@@ -134,7 +134,7 @@ namespace DragonBones
 				
 				if (_boneList.IndexOf(bone)>=0)
 				{
-					_boneList.Erase(bone);
+					_boneList.Remove(bone);
 					bone.setParent(null);
 					bone.setArmature(null);
 				}
@@ -149,7 +149,7 @@ namespace DragonBones
 				
 				if (_slotList.IndexOf(slot)>=0)
 				{
-					_slotList.Erase(slot);
+					_slotList.Remove(slot);
 					slot.setParent(null);
 					slot.setArmature(null);
 				}
@@ -162,7 +162,7 @@ namespace DragonBones
 
 		
 	
-		protected 	virtual void update(bool needUpdate)
+		public 	virtual void update(bool needUpdate)
 		{
 			_needUpdate --;
 			
@@ -176,40 +176,40 @@ namespace DragonBones
 			}
 			
 			blendingTimeline();
-			global.scaleX = (origin.scaleX + _tween.scaleX) * offset.scaleX;
-			global.scaleY = (origin.scaleY + _tween.scaleY) * offset.scaleY;
+			global.ScaleX = (origin.ScaleX + _tween.ScaleX) * offset.ScaleX;
+			global.ScaleY = (origin.ScaleY + _tween.ScaleY) * offset.ScaleY;
 			
 			if (_parent)
 			{
-				float x = origin.x + offset.x + _tween.x;
-				float y = origin.y + offset.y + _tween.y;
+				float x = origin.X + offset.X + _tween.X;
+				float y = origin.Y + offset.Y + _tween.Y;
 			    Matrix parentMatrix = _parent.globalTransformMatrix;
-				globalTransformMatrix.tx = global.x = parentMatrix.a * x + parentMatrix.c * y + parentMatrix.tx;
-				globalTransformMatrix.ty = global.y = parentMatrix.d * y + parentMatrix.b * x + parentMatrix.ty;
+				globalTransformMatrix.Tx = global.X = parentMatrix.A * x + parentMatrix.C * y + parentMatrix.Tx;
+				globalTransformMatrix.Ty = global.Y = parentMatrix.D * y + parentMatrix.B * x + parentMatrix.Ty;
 				
 				if (inheritRotation)
 				{
-					global.skewX = origin.skewX + offset.skewX + _tween.skewX + _parent.global.skewX;
-					global.skewY = origin.skewY + offset.skewY + _tween.skewY + _parent.global.skewY;
+					global.SkewX = origin.SkewX + offset.SkewX + _tween.SkewX + _parent.global.SkewX;
+					global.SkewY = origin.SkewY + offset.SkewY + _tween.SkewY + _parent.global.SkewY;
 				}
 				else
 				{
-					global.skewX = origin.skewX + offset.skewX + _tween.skewX;
-					global.skewY = origin.skewY + offset.skewY + _tween.skewY;
+					global.SkewX = origin.SkewX + offset.SkewX + _tween.SkewX;
+					global.SkewY = origin.SkewY + offset.SkewY + _tween.SkewY;
 				}
 				
 				if (inheritScale)
 				{
-					global.scaleX *= _parent.global.scaleX;
-					global.scaleY *= _parent.global.scaleY;
+					global.ScaleX *= _parent.global.ScaleX;
+					global.ScaleY *= _parent.global.ScaleY;
 				}
 			}
 			else
 			{
-				globalTransformMatrix.tx = global.x = origin.x + offset.x + _tween.x;
-				globalTransformMatrix.ty = global.y = origin.y + offset.y + _tween.y;
-				global.skewX = origin.skewX + offset.skewX + _tween.skewX;
-				global.skewY = origin.skewY + offset.skewY + _tween.skewY;
+				globalTransformMatrix.Tx = global.X = origin.X + offset.X + _tween.X;
+				globalTransformMatrix.Ty = global.Y = origin.Y + offset.Y + _tween.Y;
+				global.SkewX = origin.SkewX + offset.SkewX + _tween.SkewX;
+				global.SkewY = origin.SkewY + offset.SkewY + _tween.SkewY;
 			}
 			
 			/*
@@ -218,13 +218,13 @@ namespace DragonBones
     globalTransformMatrix.c = -global.scaleY * sin(global.skewX);
     globalTransformMatrix.d = global.scaleY * cos(global.skewX);
     */
-			globalTransformMatrix.a = offset.scaleX * cos(global.skewY);
-			globalTransformMatrix.b = offset.scaleX * sin(global.skewY);
-			globalTransformMatrix.c = -offset.scaleY * sin(global.skewX);
-			globalTransformMatrix.d = offset.scaleY * cos(global.skewX);
+			globalTransformMatrix.A = offset.ScaleX * Math.Cos(global.SkewY);
+			globalTransformMatrix.B = offset.ScaleX * Math.Sin(global.SkewY);
+			globalTransformMatrix.C = -offset.ScaleY * Math.Sin(global.SkewX);
+			globalTransformMatrix.D = offset.ScaleY * Math.Cos(global.SkewX);
 		}
 
-		protected virtual void updateColor(
+		public virtual void updateColor(
 			int aOffset,
 			int rOffset,
 			int gOffset,
@@ -239,6 +239,7 @@ namespace DragonBones
 		{
 			for (int i = 0; i < _slotList.Count; ++i)
 			{
+
 				_slotList[i].updateDisplayColor(
 					aOffset, rOffset, gOffset, bOffset,
 					aMultiplier, rMultiplier, gMultiplier, bMultiplier
@@ -248,21 +249,23 @@ namespace DragonBones
 			_isColorChanged = colorChanged;
 		}
 
-		protected virtual void hideSlots()
+		public virtual void hideSlots()
 		{
 			for (int i = 0; i < _slotList.Count;  ++i)
 			{
 				_slotList[i].changeDisplay(-1);
 			}
 		}
-		protected virtual void arriveAtFrame(TransformFrame frame,  TimelineState timelineState, AnimationState animationState, bool isCross)
+		public virtual void arriveAtFrame(TransformFrame frame,  TimelineState timelineState, AnimationState animationState, bool isCross)
 		{
 			// TODO:
 			bool displayControl =
 				animationState.displayControl &&
 					(displayController.Length<=0 || displayController == animationState.name);
 			
-			//
+			// && timelineState->_weight > 0
+			// TODO: 需要修正混合动画干扰关键帧数据的问题，如何正确高效的判断混合动画？
+
 			if (displayControl && timelineState._weight > 0)
 			{
 				const int displayIndex = frame.displayIndex;
@@ -282,8 +285,9 @@ namespace DragonBones
 						}
 					}
 				}
-				
-				if (!frame.evt.Count<0 && _armature._eventDispatcher.hasEvent(EventData.EventType.BONE_FRAME_EVENT))
+
+
+				if (!frame.evt.Length<0 && _armature._eventDispatcher.HasEvent(EventData.EventType.BONE_FRAME_EVENT))
 				{
 					EventData eventData = EventData.borrowObject(EventData.EventType.BONE_FRAME_EVENT);
 					eventData.armature = _armature;
@@ -294,17 +298,17 @@ namespace DragonBones
 					_armature._eventDataList.Add(eventData);
 				}
 				
-				if (!frame.sound.Count<=0 && Armature.soundEventDispatcher && Armature.soundEventDispatcher.hasEvent(EventData.EventType.SOUND))
+				if (!frame.sound.Length<=0 && Armature.soundEventDispatcher && Armature.soundEventDispatcher.HasEvent(EventData.EventType.SOUND))
 				{
-					EventData eventData = EventData::borrowObject(EventData::EventType::SOUND);
+					EventData eventData = EventData.borrowObject(EventData::EventType::SOUND);
 					eventData.armature = _armature;
 					eventData.bone = this;
 					eventData.animationState = animationState;
 					eventData.sound = frame.sound;
-					Armature.soundEventDispatcher.dispatchEvent(eventData);
+					Armature.soundEventDispatcher.DispatchEvent(eventData);
 				}
 				
-				if (!frame.action.Count<=0)
+				if (!frame.action.Length<=0)
 				{
 					for (int i = 0; i<= _slotList.Count;  ++i)
 					{
@@ -317,7 +321,7 @@ namespace DragonBones
 			}
 		}
 
-		protected virtual void addState(TimelineState timelineState)
+		public virtual void addState(TimelineState timelineState)
 		{
 				
 			if (_timelineStateList.IndexOf(timelineState) <0)
@@ -327,7 +331,7 @@ namespace DragonBones
 			}
 		}
 
-		protected virtual void removeState(TimelineState timelineState)
+		public virtual void removeState(TimelineState timelineState)
 		{
 
 			if (_timelineStateList.IndexOf(timelineState) >=0)
@@ -347,18 +351,18 @@ namespace DragonBones
 				Point pivot = timelineState._pivot;
 				timelineState._weight = timelineState._animationState.getCurrentWeight();
 				float weight = timelineState._weight;
-				_tween.x = transform.x * weight;
-				_tween.y = transform.y * weight;
-				_tween.skewX = transform.skewX * weight;
-				_tween.skewY = transform.skewY * weight;
-				_tween.scaleX = transform.scaleX * weight;
-				_tween.scaleY = transform.scaleY * weight;
-				_tweenPivot.x = pivot.x * weight;
-				_tweenPivot.y = pivot.y * weight;
+				_tween.X = transform.X * weight;
+				_tween.Y = transform.Y * weight;
+				_tween.SkewX = transform.SkewX * weight;
+				_tween.SkewY = transform.SkewY * weight;
+				_tween.ScaleX = transform.ScaleX * weight;
+				_tween.ScaleY = transform.ScaleY * weight;
+				_tweenPivot.X = pivot.X * weight;
+				_tweenPivot.Y = pivot.Y * weight;
 			}
 			else if (i > 1)
 			{
-				int prevLayer = _timelineStateList[i - 1]->_animationState->getLayer();
+				int prevLayer = _timelineStateList[i - 1]._animationState.getLayer();
 				int currentLayer = 0;
 				float weigthLeft = 1f;
 				float layerTotalWeight = 0f;
@@ -398,26 +402,26 @@ namespace DragonBones
 					{
 						Transform transform = timelineState._transform;
 						Point pivot = timelineState._pivot;
-						x += transform.x * weight;
-						y += transform.y * weight;
-						skewX += transform.skewX * weight;
-						skewY += transform.skewY * weight;
-						scaleX += transform.scaleX * weight;
-						scaleY += transform.scaleY * weight;
-						pivotX += pivot.x * weight;
-						pivotY += pivot.y * weight;
+						x += transform.X * weight;
+						y += transform.Y * weight;
+						skewX += transform.SkewX * weight;
+						skewY += transform.SkewY * weight;
+						scaleX += transform.ScaleX * weight;
+						scaleY += transform.ScaleY * weight;
+						pivotX += pivot.Y * weight;
+						pivotY += pivot.Y * weight;
 						layerTotalWeight += weight;
 					}
 				}
 				
-				_tween.x = x;
-				_tween.y = y;
-				_tween.skewX = skewX;
-				_tween.skewY = skewY;
-				_tween.scaleX = scaleX;
-				_tween.scaleY = scaleY;
-				_tweenPivot.x = pivotX;
-				_tweenPivot.y = pivotY;
+				_tween.X = x;
+				_tween.Y = y;
+				_tween.SkewX = skewX;
+				_tween.SkewY = skewY;
+				_tween.ScaleX = scaleX;
+				_tween.ScaleY = scaleY;
+				_tweenPivot.X = pivotX;
+				_tweenPivot.Y = pivotY;
 			}
 		}
 
@@ -425,7 +429,7 @@ namespace DragonBones
 	 
 		protected	virtual void setArmature(Armature armature)
 		{
-			Object.setArmature(armature);
+			DBObject.setArmature(armature);
 			
 			for (int i = 0; i <= _boneList.Count;  ++i)
 			{

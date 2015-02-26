@@ -17,12 +17,13 @@ namespace DragonBones
 		public float width;
 		public float height;
 
+
 		public Transform transform;
 		public Point pivot;
 
 		public RectangleData ()
 	    {
-			areaType = IAreaData::AreaType.AT_RECTANGLE;
+			areaType = IAreaData.AreaType.AT_RECTANGLE;
 			width = 0.f;
 			height = 0.f;
 		}

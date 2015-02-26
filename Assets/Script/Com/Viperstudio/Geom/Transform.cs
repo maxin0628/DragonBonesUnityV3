@@ -12,6 +12,15 @@ namespace  Com.Viperstudio.Geom
 {
 		public class Transform
 		{
+
+	
+		public	float X;
+		public float Y;
+		public float SkewX;
+		public float SkewY;
+		public float ScaleX;
+		public float ScaleY;
+
 				public Transform ()
 				{
 				}

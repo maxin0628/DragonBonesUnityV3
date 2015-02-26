@@ -16,13 +16,13 @@ namespace DragonBones
 	{
 
 		public string name;
-		public DisplayType type;
+		public DragonBones.DisplayType type;
 		public Transform transform;
 		public Point pivot;
 
 		public DisplayData ()
 		{
-			type = DisplayType.DT_IMAGE;
+			type = DragonBones.DisplayType.DT_IMAGE;
 		}
 	}
 }

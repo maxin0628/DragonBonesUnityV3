@@ -11,7 +11,7 @@ using System;
 using Com.Viperstudio.Geom;
 namespace DragonBones
 {
-		public class TransformTimeline
+		public class TransformTimeline: Timeline
 		{
 	
 		public bool transformed;

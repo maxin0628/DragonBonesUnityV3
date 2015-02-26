@@ -21,7 +21,7 @@ namespace DragonBones
 	{
 
 	
-		public 		static IEventDispatcher *soundEventDispatcher;
+		public static EventDispatcher soundEventDispatcher;
 
 	
 		public	string name;
@@ -30,18 +30,18 @@ namespace DragonBones
 		
 	
 		protected 	bool _needUpdate;
-		protected bool _slotsZOrderChanged;
+		public bool _slotsZOrderChanged;
 		protected bool _delayDispose;
 		protected bool _lockDispose;
 		
 		protected List<Bone> _boneList;
 		protected List<Slot> _slotList;
-		protected List<EventData> _eventDataList;
+		public List<EventData> _eventDataList;
 		
-		protected ArmatureData *_armatureData;
-		protected Animation *_animation;
-		protected IEventDispatcher *_eventDispatcher;
-		protected object _display;
+		protected ArmatureData _armatureData;
+		public Animation _animation;
+		public EventDispatcher _eventDispatcher;
+		public object _display;
 
 
 
@@ -121,7 +121,7 @@ namespace DragonBones
 		
 	
 	    public	virtual Bone getBone(string boneName) {
-				if (boneName.Count<=0)
+				if (boneName.Length<=0)
 				{
 					// throw
 				}
@@ -355,12 +355,12 @@ namespace DragonBones
 				passedTime *= _animation._timeScale;
 				const bool isFading = _animation._isFading;
 				
-				for (int i = _boneList.Count; i>0; i--;)
+				for (int i = _boneList.Count; i>0; i--)
 				{
 					_boneList[i].update(isFading);
 				}
 				
-				for (int i = _slotList.Count; i>0; i--;)
+				for (int i = _slotList.Count; i>0; i--)
 				{
 					Slot slot = _slotList[i];
 					slot.update();
@@ -388,7 +388,7 @@ namespace DragonBones
 				{
 					for (int i = 0; i< _eventDataList.Count;  ++i)
 					{
-						_eventDispatcher.dispatchEvent(_eventDataList[i]);
+						_eventDispatcher.DispatchEvent(_eventDataList[i]);
 						EventData.returnObject(_eventDataList[i]);
 					}
 					
@@ -399,13 +399,13 @@ namespace DragonBones
 				
 				if (_delayDispose)
 				{
-					Dispose();
+					dispose();
 				}
 
 		}
 		
 	
-		protected	virtual void addObject(object obj){
+		public	virtual void addObject(object obj){
 				Bone bone = obj as Bone;
 				Slot slot = obj as Slot;
 				
@@ -442,7 +442,7 @@ namespace DragonBones
 				}
 
 		}
-		protected  virtual void removeObject(object obj){
+		public  virtual void removeObject(object obj){
 				Bone bone = obj as Bone;
 				Slot slot = obj as Slot;
 				
@@ -450,7 +450,7 @@ namespace DragonBones
 				{
 					if(_boneList.IndexOf(bone)>=0)
 					{
-						_boneList.Remove(iterator);
+					    _boneList.Remove(bone);
 						_animation.updateAnimationStates();
 					}
 				}
@@ -484,7 +484,7 @@ namespace DragonBones
 					++level;
 				}
 				
-				sortedList.Add(new KeyValuePair(level , bone));
+				sortedList.Add(new KeyValuePair<int , Bone>(level , bone));
 			}
 			
 
@@ -499,9 +499,9 @@ namespace DragonBones
 			}
 		}
 		
-		protected virtual void arriveAtFrame(Frame frame, AnimationState animationState, bool isCross)
+		public virtual void arriveAtFrame(Frame frame, AnimationState animationState, bool isCross)
 		{
-			if (!frame.evt.length<=0 && _eventDispatcher.hasEvent(EventData.EventType.ANIMATION_FRAME_EVENT))
+			if (!frame.evt.Length<=0 && _eventDispatcher.HasEvent(EventData.EventType.ANIMATION_FRAME_EVENT))
 			{
 				EventData eventData = EventData.borrowObject(EventData.EventType.ANIMATION_FRAME_EVENT);
 				eventData.armature = this;
@@ -510,17 +510,17 @@ namespace DragonBones
 				eventData.frame = frame;
 				_eventDataList.Add(eventData);
 			}
-			
-			if (!frame.sound.length<=0 && soundEventDispatcher && soundEventDispatcher.hasEvent(EventData.EventType.SOUND))
+
+			if (!frame.sound.Length<=0 && soundEventDispatcher && soundEventDispatcher.HasEvent(EventData.EventType.SOUND))
 			{
 				EventData eventData = EventData.borrowObject(EventData.EventType.SOUND);
 				eventData.armature = this;
 				eventData.animationState = animationState;
 				eventData.sound = frame.sound;
-				soundEventDispatcher.dispatchEvent(eventData);
+				soundEventDispatcher.DispatchEvent(eventData);
 			}
 			
-			if (!frame.action.length<=0)
+			if (!frame.action.Length<=0)
 			{
 				if (animationState.displayControl)
 				{

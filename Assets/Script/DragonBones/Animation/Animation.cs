@@ -22,16 +22,16 @@ namespace DragonBones
 		     
 		public bool autoTween;
 
-		protected bool _isFading;
+		public bool _isFading;
 		protected bool _isPlaying;
-		protected float _timeScale;
+		public float _timeScale;
 
 		protected List<string> _animationList;
 		protected List<AnimationData> _animationDataList;
 		protected List<AnimationState> _animationStateList;
 		
-		Armature *_armature;
-		AnimationState *_lastAnimationState;
+		public Armature _armature;
+		public AnimationState _lastAnimationState;
 
 
 		public Animation ()
@@ -385,7 +385,7 @@ namespace DragonBones
 
 
 		}
-		protected	virtual void updateAnimationStates()
+		public	virtual void updateAnimationStates()
         {
 		    for (int i = 0; i < _animationStateList.Count;  ++i)
 			{

@@ -7,7 +7,7 @@ namespace DragonBones
 
    public interface IAnimatable {
 
-	  void AdvanceTime(float passedTime);
+	  void advanceTime(float passedTime);
 
    }
 }

@@ -22,7 +22,7 @@ namespace DragonBones
 		public string sound;
 		public string eventParameters;
 		
-		void* eventParametersParsed;
+		public Object eventParametersParsed;
 
 		  public Frame ()
 		  {
