@@ -83,67 +83,64 @@ namespace DragonBones
 		}
 	}
 	
-	public ITextureAtlas* BaseFactory::getTextureAtlas(const std::string &name) const
+	public ITextureAtlas getTextureAtlas(string name) 
 	{
-		auto iterator = _textureAtlasMap.find(name);
 		
-		if (iterator != _textureAtlasMap.end())
+		if (_textureAtlasMap.ContainsKey(name))
 		{
-			return iterator.second;
+				return _textureAtlasMap[name];
 		}
 		else
 		{
-			return nullptr;
+			return null;
 		}
 	}
-	void BaseFactory::addTextureAtlas(ITextureAtlas *textureAtlas, const std::string &name)
+	public void addTextureAtlas(ITextureAtlas textureAtlas, string name)
 	{
-		DBASSERT(textureAtlas, "Invalid textureAtlas.");
+		//DBASSERT(textureAtlas, "Invalid textureAtlas.");
 		
-		const std::string &key = name.empty() ? textureAtlas.textureAtlasData.name : name;
+		string key = name.Length<=0 ? textureAtlas.textureAtlasData.name : name;
 		
-		DBASSERT(!key.empty(), "Name is empty.");
+		//DBASSERT(!key.empty(), "Name is empty.");
 		
-		DBASSERT(_textureAtlasMap.find(key) == _textureAtlasMap.end(), "Data has been added.");
+		//DBASSERT(_textureAtlasMap.find(key) == _textureAtlasMap.end(), "Data has been added.");
 		
 		_textureAtlasMap[key] = textureAtlas;
 	}
 	
-	void BaseFactory::removeTextureAtlas(const std::string &name, bool disposeData)
+	public void removeTextureAtlas(string name, bool disposeData)
 	{
-		auto iterator = _textureAtlasMap.find(name);
-		
-		if (iterator != _textureAtlasMap.end())
+		if (_textureAtlasMap.ContainsKey(name))
 		{
 			if (disposeData)
 			{
-				iterator.second.dispose();
-				delete iterator.second;
+				_textureAtlasMap[name].dispose();
+				//delete iterator.second;
 			}
 			
-			_textureAtlasMap.erase(iterator);
+			_textureAtlasMap.Remove(name);
 		}
 	}
 	
-	void BaseFactory::dispose(bool disposeData)
+	public void dispose(bool disposeData)
 	{
 		if (disposeData)
 		{
-			for (auto iterator = _dragonBonesDataMap.begin(); iterator != _dragonBonesDataMap.end(); ++iterator)
+			foreach (KeyValuePair<string, DragonBonesData>  obj in _dragonBonesDataMap)
 			{
-				iterator.second.dispose();
-				delete iterator.second;
+				obj.Value.dispose();
+				//delete iterator.second;
 			}
 			
-			for (auto iterator = _textureAtlasMap.begin(); iterator != _textureAtlasMap.end(); ++iterator)
+			foreach (KeyValuePair<string,ITextureAtlas> obj in  _textureAtlasMap)
 			{
-				iterator.second.dispose();
-				delete iterator.second;
+				obj.Value.dispose();
+				//delete iterator.second;
 			}
 		}
 		
-		_dragonBonesDataMap.clear();
-		_textureAtlasMap.clear();
+		_dragonBonesDataMap.Clear();
+		_textureAtlasMap.Clear();
 	}
 	
 	Armature* BaseFactory::buildArmature(const std::string &armatureName) const
