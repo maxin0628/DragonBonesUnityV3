@@ -20,7 +20,7 @@ namespace DragonBones
 		
 		private  static List<TimelineState> _pool;
 
-		public TimelineState borrowObject()
+		public static TimelineState borrowObject()
 		{
 			if (_pool.Count<=0)
 			{
@@ -32,7 +32,7 @@ namespace DragonBones
 			return timelinseState;
 		}
 		
-		public void returnObject(TimelineState timelineState)
+		public static void returnObject(TimelineState timelineState)
 		{
 			if (_pool.IndexOf( timelineState) < 0)
 			{
@@ -42,7 +42,7 @@ namespace DragonBones
 			timelineState.clear();
 		}
 		
-		public void clearObjects()
+		public static void clearObjects()
 		{
 			for (int i = 0; i < _pool.Count; ++i)
 			{
@@ -50,7 +50,7 @@ namespace DragonBones
 				//delete _pool[i];
 			}
 			
-			_pool.RemoveAll();
+			_pool.Clear();
 		}
 		
 	
@@ -102,26 +102,26 @@ namespace DragonBones
 			_tweenColor = false;
 			_currentTime = -1;
 			_currentFrameIndex = -1;
-			_weight = 1.f;
+			_weight = 1.0f;
 			_tweenEasing = DragonBones.USE_FRAME_TWEEN_EASING;
 			_totalTime = _timeline.duration;
 			name = _timeline.name;
-			_transform.X = 0.f;
-			_transform.Y = 0.f;
-			_transform.ScaleX = 0.f;
-			_transform.ScaleY = 0.f;
-			_transform.SkewX = 0.f;
-			_transform.SkewY = 0.f;
-			_pivot.X = 0.f;
-			_pivot.Y = 0.f;
-			_durationTransform.X = 0.f;
-			_durationTransform.Y = 0.f;
-			_durationTransform.ScaleX = 0.f;
-			_durationTransform.ScaleY = 0.f;
-			_durationTransform.SkewX = 0.f;
-			_durationTransform.SkewY = 0.f;
-			_durationPivot.X = 0.f;
-			_durationPivot.Y = 0.f;
+			_transform.X = 0.0f;
+			_transform.Y = 0.0f;
+			_transform.ScaleX = 0.0f;
+			_transform.ScaleY = 0.0f;
+			_transform.SkewX = 0.0f;
+			_transform.SkewY = 0.0f;
+			_pivot.X = 0.0f;
+			_pivot.Y = 0.0f;
+			_durationTransform.X = 0.0f;
+			_durationTransform.Y = 0.0f;
+			_durationTransform.ScaleX = 0.0f;
+			_durationTransform.ScaleY = 0.0f;
+			_durationTransform.SkewX = 0.0f;
+			_durationTransform.SkewY = 0.0f;
+			_durationPivot.X = 0.0f;
+			_durationPivot.Y = 0.0f;
 			// copy
 			_originTransform = _timeline.originTransform;
 			// copy
@@ -260,7 +260,7 @@ namespace DragonBones
 					
 					currentFrame = (TransformFrame)(_timeline.frameList[_currentFrameIndex]);
 					
-					if (prevFrame)
+					if (prevFrame!=null)
 					{
 
 						_bone.arriveAtFrame(prevFrame, this, _animationState, true);
@@ -271,7 +271,7 @@ namespace DragonBones
 					prevFrame = currentFrame;
 				}
 				
-				if (currentFrame)
+				if (currentFrame!=null)
 				{
 					_bone.arriveAtFrame(currentFrame, this, _animationState, false);
 					_blendEnabled = currentFrame.displayIndex >= 0;
@@ -302,20 +302,20 @@ namespace DragonBones
 			bool tweenEnabled = false;
 			int nextFrameIndex = _currentFrameIndex + 1;
 			
-			if (nextFrameIndex >= (int)(_timeline.frameListCount))
+			if (nextFrameIndex >= (int)(_timeline.frameList.Count))
 			{
 				nextFrameIndex = 0;
 			}
 			
-			const TransformFrame currentFrame = (TransformFrame)(_timeline.frameList[_currentFrameIndex]);
-			const TransformFrame nextFrame = (TransformFrame)(_timeline.frameList[nextFrameIndex]);
+			 TransformFrame currentFrame = (TransformFrame)(_timeline.frameList[_currentFrameIndex]);
+			 TransformFrame nextFrame = (TransformFrame)(_timeline.frameList[nextFrameIndex]);
 			
 			if (
 				nextFrameIndex == 0 &&
 				(
 				!_animationState.lastFrameAutoTween ||
 				(
-				_animationState.getPlayTimes() &&
+				_animationState.getPlayTimes()!=0 &&
 				_animationState.getCurrentPlayTimes() >= _animationState.getPlayTimes() &&
 				((_currentFramePosition + _currentFrameDuration) / _totalTime + currentPlayTimes - _timeline.offset) * _timeline.scale > 0.999999f
 				)
@@ -346,7 +346,7 @@ namespace DragonBones
 					{
 						if (_tweenEasing == DragonBones.AUTO_TWEEN_EASING)
 						{
-							_tweenEasing = 0.f;
+							_tweenEasing = 0.0f;
 						}
 						
 						// _tweenEasing [-1, 0) 0 (0, 1] (1, 2]
@@ -395,14 +395,14 @@ namespace DragonBones
 				_durationPivot.Y = nextFrame.pivot.Y - currentFrame.pivot.Y;
 				
 				if (
-					_durationTransform.X ||
-					_durationTransform.Y ||
-					_durationTransform.SkewX ||
-					_durationTransform.SkewY ||
-					_durationTransform.ScaleX ||
-					_durationTransform.ScaleY ||
-					_durationPivot.X ||
-					_durationPivot.Y
+					_durationTransform.X!=0 ||
+					_durationTransform.Y!=0 ||
+					_durationTransform.SkewX!=0 ||
+					_durationTransform.SkewY!=0 ||
+					_durationTransform.ScaleX!=0 ||
+					_durationTransform.ScaleY!=0 ||
+					_durationPivot.X!=0 ||
+					_durationPivot.Y!=0
 					)
 				{
 					_tweenTransform = true;
@@ -415,7 +415,7 @@ namespace DragonBones
 				}
 				
 				// color
-				if (currentFrame.color && nextFrame.color)
+				if (currentFrame.color!=null && nextFrame.color!=null)
 				{
 					_durationColor.AlphaOffset = nextFrame.color.AlphaOffset - currentFrame.color.AlphaOffset;
 					_durationColor.RedOffset = nextFrame.color.RedOffset - currentFrame.color.RedOffset;
@@ -427,14 +427,14 @@ namespace DragonBones
 					_durationColor.BlueMultiplier = nextFrame.color.BlueMultiplier - currentFrame.color.BlueMultiplier;
 					
 					if (
-						_durationColor.AlphaOffset ||
-						_durationColor.RedOffset ||
-						_durationColor.GreenOffset ||
-						_durationColor.BlueOffset ||
-						_durationColor.AlphaMultiplier ||
-						_durationColor.RedMultiplier ||
-						_durationColor.GreenMultiplier ||
-						_durationColor.BlueMultiplier
+						_durationColor.AlphaOffset!=0 ||
+						_durationColor.RedOffset!=0 ||
+						_durationColor.GreenOffset!=0 ||
+						_durationColor.BlueOffset!=0 ||
+						_durationColor.AlphaMultiplier!=0 ||
+						_durationColor.RedMultiplier!=0 ||
+						_durationColor.GreenMultiplier!=0 ||
+						_durationColor.BlueMultiplier!=0
 						)
 					{
 						_tweenColor = true;
@@ -444,7 +444,7 @@ namespace DragonBones
 						_tweenColor = false;
 					}
 				}
-				else if (currentFrame.color)
+				else if (currentFrame.color!=null)
 				{
 					_tweenColor = true;
 					_durationColor.AlphaOffset = -currentFrame.color.AlphaOffset;
@@ -456,7 +456,7 @@ namespace DragonBones
 					_durationColor.GreenMultiplier = 1 - currentFrame.color.GreenMultiplier;
 					_durationColor.BlueMultiplier = 1 - currentFrame.color.BlueMultiplier;
 				}
-				else if (nextFrame.color)
+				else if (nextFrame.color!=null)
 				{
 					_tweenColor = true;
 					_durationColor.AlphaOffset = nextFrame.color.AlphaOffset;
@@ -523,7 +523,7 @@ namespace DragonBones
 			
 			if (!_tweenColor && _animationState.displayControl)
 			{
-				if (currentFrame.color)
+				if (currentFrame.color!=null)
 				{
 					_bone.updateColor(
 						currentFrame.color.AlphaOffset,
@@ -539,7 +539,8 @@ namespace DragonBones
 				}
 				else if (_bone._isColorChanged)
 				{
-					_bone.updateColor(0, 0, 0, 0, 1.f, 1.f, 1.f, 1.f, false);
+
+					_bone.updateColor(0, 0, 0, 0, 1.0f, 1.0f, 1.0f, 1.0f, false);
 				}
 			}
 		}
@@ -548,17 +549,17 @@ namespace DragonBones
 		{
 			float progress = (_currentTime - _currentFramePosition) / (float)(_currentFrameDuration);
 			
-			if (_tweenEasing && _tweenEasing != DragonBones.NO_TWEEN_EASING)
+			if (_tweenEasing!=0 && _tweenEasing != DragonBones.NO_TWEEN_EASING)
 			{
 				progress = DragonBones.getEaseValue(progress, _tweenEasing);
 			}
 			
-			const TransformFrame currentFrame = (TransformFrame)(_timeline.frameList[_currentFrameIndex]);
+			 TransformFrame currentFrame = (TransformFrame)(_timeline.frameList[_currentFrameIndex]);
 
 			if (_tweenTransform)
 			{
-				const Transform currentTransform = currentFrame.transform;
-				const Point currentPivot = currentFrame.pivot;
+				Transform currentTransform = currentFrame.transform;
+				Point currentPivot = currentFrame.pivot;
 				
 				if (_animationState.additiveBlending)
 				{
@@ -600,7 +601,7 @@ namespace DragonBones
 			
 			if (_tweenColor && _animationState.displayControl)
 			{
-				if (currentFrame.color)
+				if (currentFrame.color!=null)
 				{
 					_bone.updateColor(
 						(int)(currentFrame.color.AlphaOffset + _durationColor.AlphaOffset * progress),
@@ -621,10 +622,10 @@ namespace DragonBones
 						(int)(_durationColor.RedOffset * progress),
 						(int)(_durationColor.GreenOffset * progress),
 						(int)(_durationColor.BlueOffset * progress),
-						1.f + _durationColor.AlphaMultiplier * progress,
-						1.f + _durationColor.RedMultiplier * progress,
-						1.f + _durationColor.GreenMultiplier * progress,
-						1.f + _durationColor.BlueMultiplier * progress,
+						1.0f + _durationColor.AlphaMultiplier * progress,
+						1.0f + _durationColor.RedMultiplier * progress,
+						1.0f + _durationColor.GreenMultiplier * progress,
+						1.0f + _durationColor.BlueMultiplier * progress,
 						true
 						);
 				}
@@ -654,9 +655,9 @@ namespace DragonBones
 							_transform.SkewX =
 							_transform.SkewY =
 							_transform.ScaleX =
-							_transform.ScaleY = 0.f;
+							_transform.ScaleY = 0.0f;
 					_pivot.X =
-						_pivot.Y = 0.f;
+						_pivot.Y = 0.0f;
 				}
 				else
 				{
@@ -672,7 +673,7 @@ namespace DragonBones
 				
 				if (_animationState.displayControl)
 				{
-					if (currentFrame.color)
+					if (currentFrame.color!= null)
 					{
 						_bone.updateColor(
 							currentFrame.color.AlphaOffset,
@@ -688,7 +689,7 @@ namespace DragonBones
 					}
 					else if (_bone._isColorChanged)
 					{
-						_bone.updateColor(0, 0, 0, 0, 1.f, 1.f, 1.f, 1.f, false);
+						_bone.updateColor(0, 0, 0, 0, 1.0f, 1.0f, 1.0f, 1.0f, false);
 					}
 				}
 			}
@@ -696,7 +697,7 @@ namespace DragonBones
 
 
 		private void clear(){
-			if(_bone)
+			if(_bone!=null)
 			{
 				_bone.removeState(this);
 				_bone = null;
@@ -706,5 +707,6 @@ namespace DragonBones
 			_timeline = null;
 
 		}
+}
 }
 

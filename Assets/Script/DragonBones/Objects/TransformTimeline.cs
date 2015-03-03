@@ -23,7 +23,7 @@ namespace DragonBones
 
 		public TransformTimeline ()
 		{
-			offset = 0.f;
+			offset = 0.0f;
 			transformed = false;
 		}
 

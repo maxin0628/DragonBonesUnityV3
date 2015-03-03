@@ -39,7 +39,7 @@ namespace DragonBones
 				return null;
 			}
 			
-			if (areaName.Length)
+			if (areaName.Length!=0)
 			{
 				return areaDataList[0];
 			}

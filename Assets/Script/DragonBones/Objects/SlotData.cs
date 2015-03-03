@@ -19,12 +19,12 @@ namespace DragonBones
 		
 		public string name;
 		public string parent;
-		public BlendMode blendMode;
+		public DragonBones.BlendMode blendMode;
 		public List<DisplayData> displayDataList;
 		public SlotData ()
 		{
-			zOrder = 0.f;
-			blendMode = BlendMode.BM_NORMAL;
+			zOrder = 0.0f;
+			blendMode = DragonBones.BlendMode.BM_NORMAL;
 
 		}
 

@@ -55,7 +55,7 @@ namespace DragonBones
 		{
 			if (timeScale < 0 || timeScale != timeScale)
 			{
-				timeScale = 1.f;
+				timeScale = 1.0f;
 			}
 			
 			_timeScale = timeScale;
@@ -69,7 +69,7 @@ namespace DragonBones
 		
 		public void add(IAnimatable animatable)
 		{
-			if (animatable && !contains(animatable))
+			if (animatable!=null && !contains(animatable))
 			{
 				_animatableList.Add(animatable);
 			}
@@ -77,7 +77,7 @@ namespace DragonBones
 		
 		public void remove(IAnimatable animatable)
 		{
-			if (!animatable) { return; }
+			if (animatable==null) { return; }
 			
 
 			if (_animatableList.IndexOf(animatable) >=0)
@@ -118,7 +118,7 @@ namespace DragonBones
             passedTime = 0.f;
         }
         */
-				passedTime = 0.f;
+				passedTime = 0.0f;
 			}
 			
 			passedTime *= _timeScale;
@@ -131,7 +131,7 @@ namespace DragonBones
 			
 			for (int i = 0; i < _animatableList.Count; ++i)
 			{
-				if (_animatableList[i])
+				if (_animatableList[i]!=null)
 				{
 					_animatableList[i].advanceTime(passedTime);
 				}
@@ -165,3 +165,4 @@ namespace DragonBones
    }
 }
 
+}

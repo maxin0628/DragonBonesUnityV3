@@ -1,0 +1,33 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Script/DragonBones/Factories/BaseFactory.cs">
+    <Files>
+      <File FileName="Assets/Script/DragonBones/Animation/TimelineState.cs" Line="700" Column="18" />
+      <File FileName="Assets/Script/DragonBones/Animation/WorldClock.cs" Line="134" Column="33" />
+      <File FileName="Assets/Script/DragonBones/Core/Bone.cs" Line="67" Column="39" />
+      <File FileName="Assets/Script/DragonBones/Events/EventData.cs" Line="155" Column="26" />
+      <File FileName="Assets/Script/DragonBones/Animation/AnimationState.cs" Line="723" Column="54" />
+      <File FileName="Assets/Script/DragonBones/Core/Slot.cs" Line="374" Column="29" />
+      <File FileName="Assets/Script/DragonBones/Objects/SlotData.cs" Line="26" Column="16" />
+      <File FileName="Assets/Script/DragonBones/Animation/Animation.cs" Line="407" Column="30" />
+      <File FileName="Assets/Script/DragonBones/Core/DBObject.cs" Line="68" Column="1" />
+      <File FileName="Assets/Script/DragonBones/DragonBones.cs" Line="59" Column="25" />
+      <File FileName="Assets/Script/DragonBones/Objects/TImeline.cs" Line="24" Column="15" />
+      <File FileName="Assets/Script/DragonBones/Objects/EllipseData.cs" Line="31" Column="16" />
+      <File FileName="Assets/Script/DragonBones/Objects/RectangleData.cs" Line="28" Column="16" />
+      <File FileName="Assets/Script/DragonBones/Objects/TransformFrame.cs" Line="38" Column="16" />
+      <File FileName="Assets/Script/DragonBones/Objects/TransformTimeline.cs" Line="26" Column="16" />
+      <File FileName="Assets/Script/Com/Viperstudio/Events/EventDispatcher.cs" Line="121" Column="15" />
+      <File FileName="Assets/Script/Com/Viperstudio/Geom/ColorTransform.cs" Line="18" Column="14" />
+      <File FileName="Assets/Script/DragonBones/Core/Armature.cs" Line="600" Column="22" />
+      <File FileName="Assets/Script/Com/Viperstudio/Events/Event.cs" Line="13" Column="31" />
+      <File FileName="Assets/Script/DragonBones/Objects/ArmatureData.cs" Line="30" Column="14" />
+      <File FileName="Assets/Script/DragonBones/Objects/BoneData.cs" Line="42" Column="26" />
+      <File FileName="Assets/Script/DragonBones/Factories/BaseFactory.cs" Line="20" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

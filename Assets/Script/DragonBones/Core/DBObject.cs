@@ -38,7 +38,7 @@ namespace DragonBones
 			_visible = true;
 			_armature = null;
 			_parent = null;
-			offset.ScaleX = offset.ScaleY = 1.f;
+			offset.ScaleX = offset.ScaleY = 1.0f;
 			userData = null;
 
 		}
@@ -65,16 +65,16 @@ namespace DragonBones
 
 		
 	
-		public 	virtual void setArmature(Armature armature)
+		public virtual void setArmature(Armature armature)
 		{
-			if (_armature)
+			if (_armature!=null)
 			{
 				_armature.removeObject(this);
 			}
 			
 			_armature = armature;
 			
-			if (_armature)
+			if (_armature!=null)
 			{
 				_armature.addObject(this);
 			}

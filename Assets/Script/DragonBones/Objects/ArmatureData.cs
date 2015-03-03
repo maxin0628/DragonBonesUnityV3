@@ -20,9 +20,15 @@ namespace DragonBones
 		  public List<SkinData> skinDataList;
 		  public List<AnimationData> animationDataList;
 
-		  static bool sortBone( KeyValuePair<int, BoneData> a, KeyValuePair<int, BoneData> b)
+
+		 //TODO check
+		  static int sortBone( KeyValuePair<int, BoneData> a, KeyValuePair<int, BoneData> b)
 		  {
-			return a.Key < b.Key;
+			if(a.Key < b.Key)
+			 return -1;
+			else if(a.Key > b.Key)
+				return 1;
+		    return 0;
 		  }
 
 		  public ArmatureData ()
@@ -103,12 +109,12 @@ namespace DragonBones
 		
 		void sortBoneDataList()
 		{
-			if (boneDataList.Count)
+			if (boneDataList.Count!=0)
 			{
 				return;
 			}
 			
-			List<KeyValuePair<int , BoneData>> sortedList;
+			List<KeyValuePair<int , BoneData>> sortedList = new List<KeyValuePair<int, BoneData>>();
 			
 			for (int i = 0; i < boneDataList.Count; ++i)
 			{
@@ -116,7 +122,7 @@ namespace DragonBones
 				BoneData parentData = boneData;
 				int level = 0;
 				
-				while (parentData)
+				while (parentData!=null)
 				{
 					parentData = getBoneData(parentData.parent);
 					level ++;

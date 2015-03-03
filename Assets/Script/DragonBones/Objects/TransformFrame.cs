@@ -35,7 +35,7 @@ namespace DragonBones
 			tweenScale = true;
 			tweenRotate = 0;
 			displayIndex = 0;
-			zOrder = 0.f;
+			zOrder = 0.0f;
 			tweenEasing = DragonBones.NO_TWEEN_EASING;
 			frameType = Frame.FrameType.FT_TRANSFORM_FRAME;
 			color = null;

@@ -9,26 +9,27 @@
 // ------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using Com.Viperstudio.Events;
 namespace DragonBones
 {
-		public class EventData
+		public class EventData: Event
 		{
 
-		public string Z_ORDER_UPDATED = "zorderUpdate";
-		public string ANIMATION_FRAME_EVENT = "animationFrameEvent";
-		public string BONE_FRAME_EVENT = "boneFrameEvent";
-		public string SOUND = "sound";
-		public string FADE_IN = "fadeIn";
-		public string FADE_OUT = "fadeOut";
-		public string START = "start";
-		public string COMPLETE = "complete";
-		public string LOOP_COMPLETE = "loopComplete";
-		public string FADE_IN_COMPLETE = "fadeInComplete";
-		public string FADE_OUT_COMPLETE = "fadeOutComplete";
+		public static string Z_ORDER_UPDATED = "zorderUpdate";
+		public static string ANIMATION_FRAME_EVENT = "animationFrameEvent";
+		public static string BONE_FRAME_EVENT = "boneFrameEvent";
+		public static string SOUND = "sound";
+		public static string FADE_IN = "fadeIn";
+		public static string FADE_OUT = "fadeOut";
+		public static string START = "start";
+		public static string COMPLETE = "complete";
+		public static string LOOP_COMPLETE = "loopComplete";
+		public static string FADE_IN_COMPLETE = "fadeInComplete";
+		public static string FADE_OUT_COMPLETE = "fadeOutComplete";
 		
-		public string _ERROR = "error";
+		public static string _ERROR = "error";
 
-	   private List<EventData> _pool;
+		private static List<EventData> _pool;
 		
 	
 		public	string frameLabel;
@@ -39,8 +40,7 @@ namespace DragonBones
 		public AnimationState animationState;
 		public Frame frame;
 		
-	private:
-			EventType _type;
+	    private	EventType _type;
 
 
 		public enum  EventType
@@ -53,7 +53,7 @@ namespace DragonBones
 			_ERROR
 		};
 
-		public string typeToString(EventData.EventType eventType)
+		public static string typeToString(EventData.EventType eventType)
 		{
 			switch (eventType)
 			{
@@ -100,7 +100,7 @@ namespace DragonBones
 
 
 
-		public EventData borrowObject(EventType eventType)
+		public static EventData borrowObject(EventType eventType)
 		{
 			if (_pool.Count<=0)
 			{
@@ -113,7 +113,7 @@ namespace DragonBones
 			return eventData;
 		}
 		
-		public void returnObject(EventData eventData)
+		public static void returnObject(EventData eventData)
 		{
 
 			if (_pool.IndexOf(eventData) < 0 )
@@ -124,7 +124,7 @@ namespace DragonBones
 			eventData.clear();
 		}
 		
-		public void clearObjects()
+		public static void clearObjects()
 		{
 			for (int i = 0; i < _pool.Count;  ++i)
 			{
@@ -146,7 +146,8 @@ namespace DragonBones
 		}
 
 
-		public EventData (EventType type = EventType._ERROR, Armature armatureTarget = null)
+
+		public EventData (EventType type = EventType._ERROR, Armature armatureTarget = null): base(typeToString(type))
 		{
 			_type = type;
 			armature = armatureTarget;

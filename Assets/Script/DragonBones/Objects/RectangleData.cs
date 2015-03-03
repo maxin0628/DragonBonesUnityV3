@@ -24,8 +24,8 @@ namespace DragonBones
 		public RectangleData ()
 	    {
 			areaType = IAreaData.AreaType.AT_RECTANGLE;
-			width = 0.f;
-			height = 0.f;
+			width = 0.0f;
+			height = 0.0f;
 		}
 
 

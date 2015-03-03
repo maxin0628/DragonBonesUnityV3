@@ -21,7 +21,7 @@ namespace DragonBones
 	    public Timeline ()
 		{
 			duration = 0;
-			scale = 1.f;
+			scale = 1.0f;
 		}
 
 		}

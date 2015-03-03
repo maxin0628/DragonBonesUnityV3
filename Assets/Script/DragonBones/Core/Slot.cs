@@ -25,7 +25,7 @@ namespace DragonBones
 		protected ColorTransform _colorTransform;
 
 		// <displayOrArmature*, DisplayType>
-		protected List<KeyValuePair<object, DisplayType>> _displayList;
+		protected List<KeyValuePair<object, DragonBones.DisplayType>> _displayList;
 		
 		protected SlotData _slotData;
 		public object _display;
@@ -65,14 +65,14 @@ namespace DragonBones
 			{
 				_offsetZOrder = value - _originZOrder - _tweenZOrder;
 				
-				if (_armature)
+				if (_armature!=null)
 				{
 					_armature._slotsZOrderChanged = true;
 				}
 			}
 		}
 		
-		public void getDisplay() 
+		public object getDisplay() 
 		{
 			return _display;
 		}
@@ -85,9 +85,10 @@ namespace DragonBones
 				_displayIndex = 0;
 			}
 			
-			if (_displayIndex >= (int)(_displayList.Count))
+			if (_displayIndex >= (_displayList.Count))
 			{
-				_displayList.Count = (_displayIndex + 1);
+				//_displayList.Count = (_displayIndex + 1);
+				_displayList.Add(new KeyValuePair<object, DragonBones.DisplayType>());
 			}
 			
 			if (_displayList[_displayIndex].Key == display)
@@ -95,8 +96,8 @@ namespace DragonBones
 				return;
 			}
 			
-			_displayList[_displayIndex].Key = display;
-			_displayList[_displayIndex].Value = displayType;
+			_displayList[_displayIndex] = new KeyValuePair<object, DragonBones.DisplayType>(display, displayType);
+			//_displayList[_displayIndex].Value = displayType;
 			updateSlotDisplay(disposeExisting);
 		}
 		
@@ -110,12 +111,12 @@ namespace DragonBones
 			setDisplay(childArmature, DragonBones.DisplayType.DT_ARMATURE, disposeExisting);
 		}
 		
-		public List<KeyValuePair<object, DisplayType>> getDisplayList() 
+		public List<KeyValuePair<object, DragonBones.DisplayType>> getDisplayList() 
 		{
 			return _displayList;
 		}
 
-		public void setDisplayList(List<KeyValuePair<object, DisplayType>> displayList, bool disposeExisting)
+		public void setDisplayList(List<KeyValuePair<object, DragonBones.DisplayType>> displayList, bool disposeExisting)
 		{
 			if (_displayIndex < 0)
 			{
@@ -148,9 +149,9 @@ namespace DragonBones
 		
 		public void setArmature(Armature armature)
 		{
-			DBObject.setArmature(armature);
+			base.setArmature(armature);
 			
-			if (_armature)
+			if (_armature!=null)
 			{
 				_armature._slotsZOrderChanged = true;
 				addDisplayToContainer(_armature._display, -1);
@@ -169,8 +170,8 @@ namespace DragonBones
 				return;
 			}
 			
-			float x = origin.X + offset.X + _parent._tweenPivot.x;
-			float y = origin.Y + offset.Y + _parent._tweenPivot.y;
+			float x = origin.X + offset.X + _parent._tweenPivot.X;
+			float y = origin.Y + offset.Y + _parent._tweenPivot.Y;
 			Matrix parentMatrix = _parent.globalTransformMatrix;
 			//globalTransformMatrix.tx = global.x = parentMatrix.a * x + parentMatrix.c * y + parentMatrix.tx;
 			//globalTransformMatrix.ty = global.y = parentMatrix.d * y + parentMatrix.b * x + parentMatrix.ty;
@@ -199,10 +200,10 @@ namespace DragonBones
 				global.ScaleY = origin.ScaleY * offset.ScaleY;
 			}
 			
-			globalTransformMatrix.A = global.ScaleX * Math.Cos(global.SkewY);
-			globalTransformMatrix.B = global.ScaleX * Math.Sin(global.SkewY);
-			globalTransformMatrix.C = -global.ScaleY * Math.Sin(global.SkewX);
-			globalTransformMatrix.D = global.ScaleY * Math.Cos(global.SkewX);
+			globalTransformMatrix.A = global.ScaleX * (float)Math.Cos(global.SkewY);
+			globalTransformMatrix.B = global.ScaleX * (float)Math.Sin(global.SkewY);
+			globalTransformMatrix.C = -global.ScaleY * (float)Math.Sin(global.SkewX);
+			globalTransformMatrix.D = global.ScaleY * (float)Math.Cos(global.SkewX);
 			updateDisplayTransform();
 		}
 
@@ -218,7 +219,7 @@ namespace DragonBones
 					updateChildArmatureAnimation();
 				}
 			}
-			else if (!_displayList.Count<=0)
+			else if (_displayList.Count>0)
 			{
 				if (displayIndex >= (int)(_displayList.Count))
 				{
@@ -232,8 +233,8 @@ namespace DragonBones
 					updateSlotDisplay(false);
 					
 					if (
-						_slotData &&
-						!_slotData.displayDataList.Count<=0 &&
+						_slotData!=null &&
+						_slotData.displayDataList.Count>0 &&
 						_displayIndex < (int)(_slotData.displayDataList.Count)
 						)
 					{
@@ -244,7 +245,7 @@ namespace DragonBones
 				{
 					_isShowDisplay = true;
 					
-					if (_armature)
+					if (_armature!=null)
 					{
 						_armature._slotsZOrderChanged = true;
 						addDisplayToContainer(_armature._display, -1);
@@ -271,11 +272,11 @@ namespace DragonBones
 		
 		public void playChildArmatureAnimation()
 		{
-			if (_childArmature)
+			if (_childArmature!=null)
 			{
 				if (
-					_armature &&
-					_armature._animation._lastAnimationState &&
+					_armature!=null &&
+					_armature._animation._lastAnimationState!=null &&
 					_childArmature._animation.hasAnimation(_armature._animation._lastAnimationState.name)
 					)
 				{
@@ -290,7 +291,7 @@ namespace DragonBones
 		
 		public void stopChildArmatureAnimation()
 		{
-			if (_childArmature)
+			if (_childArmature!=null)
 			{
 				_childArmature._animation.stop();
 				_childArmature._animation._lastAnimationState = null;
@@ -302,7 +303,7 @@ namespace DragonBones
 		{
 			int currentDisplayIndex = -1;
 			
-			if (_display)
+			if (_display!=null)
 			{
 				currentDisplayIndex = getDisplayZIndex();
 				removeDisplayFromContainer();
@@ -310,13 +311,13 @@ namespace DragonBones
 			
 			if (disposeExisting)
 			{
-				if (_childArmature)
+				if (_childArmature!=null)
 				{
 					_childArmature.dispose();
 					//delete _childArmature;
 					_childArmature = null;
 				}
-				else if (_display)
+				else if (_display!=null)
 				{
 					disposeDisplay();
 					_display = null;
@@ -328,7 +329,7 @@ namespace DragonBones
 			Object display = _displayList[_displayIndex].Key;
 			DragonBones.DisplayType displayType = _displayList[_displayIndex].Value;
 			
-			if (display)
+			if (display!=null)
 			{
 				if (displayType == DragonBones.DisplayType.DT_ARMATURE)
 				{
@@ -351,9 +352,9 @@ namespace DragonBones
 			
 			updateDisplay(_display);
 			
-			if (_display)
+			if (_display!=null)
 			{
-				if (_armature && _isShowDisplay)
+				if (_armature!=null && _isShowDisplay)
 				{
 					if (currentDisplayIndex < 0)
 					{
@@ -370,7 +371,7 @@ namespace DragonBones
 				{
 					updateDisplayBlendMode(_blendMode);
 				}
-				else if (_slotData)
+				else if (_slotData!=null)
 				{
 					updateDisplayBlendMode(_slotData.blendMode);
 				}
@@ -434,6 +435,15 @@ namespace DragonBones
 
 		}
 
+		public void dispose()
+		{
+			//Object::dispose();
+			//
+			_displayList.Clear();
+			_slotData = null;
+			_childArmature = null;
+			_display = null;
+		}
 
 		}
 }

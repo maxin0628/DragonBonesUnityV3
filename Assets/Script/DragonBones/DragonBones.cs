@@ -10,31 +10,31 @@ namespace DragonBones
   public class DragonBones  {
 
 		public  const float PI = 3.14159265358979323846f;
-		public  const float ANGLE_TO_RADIAN = PI / 180.f;
-		public  const float RADIAN_TO_ANGLE = 180.f / PI;
+		public  const float ANGLE_TO_RADIAN = PI / 180.0f;
+		public  const float RADIAN_TO_ANGLE = 180.0f / PI;
 		
-		public  const float AUTO_TWEEN_EASING = 10.f;
-		public  const float NO_TWEEN_EASING = 20.f;
-		public  const float USE_FRAME_TWEEN_EASING = 30.f;
+		public  const float AUTO_TWEEN_EASING = 10.0f;
+		public  const float NO_TWEEN_EASING = 20.0f;
+		public  const float USE_FRAME_TWEEN_EASING = 30.0f;
 
 		public static float round(float value)
 		{
-			return (value > 0.0f) ? Math.Floor(value + 0.5f) : Math.Ceiling(value - 0.5f);
+			return (value > 0.0f) ? (float)Math.Floor(value + 0.5f) : (float)Math.Ceiling(value - 0.5f);
 		}
 		
 		public static  float formatRadian(float radian)
 		{
 
-			radian = radian % (PI * 2.f);
+			radian = radian % (PI * 2.0f);
 			
 			if (radian > PI)
 			{
-				radian -= PI * 2.f;
+				radian -= PI * 2.0f;
 			}
 			
 			if (radian < -PI)
 			{
-				radian += PI * 2.f;
+				radian += PI * 2.0f;
 			}
 			
 			return radian;
@@ -42,21 +42,21 @@ namespace DragonBones
 		
 		public static  float getEaseValue(float value, float easing)
 		{
-			float valueEase = 1.f;
+			float valueEase = 1.0f;
 			
 			if (easing > 1)    // ease in out
 			{
-				valueEase = 0.5f * (1.f - Math.Cos(value * PI));
-				easing -= 1.f;
+				valueEase = 0.5f * (1.0f - (float)Math.Cos(value * PI));
+				easing -= 1.0f;
 			}
 			else if (easing > 0)    // ease out
 			{
-				valueEase = 1.f - Math.Pow(1.f - value, 2);
+				valueEase = 1.0f - (float)Math.Pow(1.0f - value, 2);
 			}
 			else if (easing < 0)    // ease in
 			{
-				easing *= -1.f;
-				valueEase =  Math.Pow(value, 2);
+				easing *= -1.0f;
+				valueEase =  (float)Math.Pow(value, 2);
 			}
 			
 			return (valueEase - value) * easing + value;

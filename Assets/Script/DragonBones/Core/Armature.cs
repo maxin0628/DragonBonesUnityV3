@@ -64,24 +64,28 @@ namespace DragonBones
 		}
 
 	
-		private	static bool sortBone(KeyValuePair<int, Bone> a, KeyValuePair<int, Bone> b)
+		private	static int sortBone(KeyValuePair<int, Bone> a, KeyValuePair<int, Bone> b)
 		{
 			if (a.Key < b.Key)
 						return -1;
-			if (a.Key == b.Key)
+			else if (a.Key == b.Key)
 						return 0;
-			if (a.Key > b.Key)
+			else if (a.Key > b.Key)
 						return 1;
 
+			return 0;
+
 	    }
-		private static bool sortSlot(Slot a,  Slot b)
+		private static int sortSlot(Slot a,  Slot b)
 		{
 			if (a.getZOrder() < b.getZOrder())
 			    return -1;
-			if (a.getZOrder() == b.getZOrder())
+			else if (a.getZOrder() == b.getZOrder())
 			    return 0;
-			if (a.getZOrder() > b.getZOrder())
+			else if (a.getZOrder() > b.getZOrder())
 			    return 1;
+
+			return 0;
 			
 		}
 		
@@ -108,7 +112,7 @@ namespace DragonBones
 	    {
 				return _animation;
 		}
-		public virtual void getDisplay()
+		public virtual object getDisplay()
 		{
 				return _display;
 		}
@@ -137,22 +141,22 @@ namespace DragonBones
 				return null;
 		}
 		public virtual Bone getBoneByDisplay(object display) {
-				if (!display)
+				if (display==null)
 				{
 					// throw
 				}
 				
 				Slot slot = getSlotByDisplay(display);
-				return slot ? slot._parent : null;
+				return slot!=null ? slot._parent : null;
 		      	
 		}
 		public virtual void addBone(Bone bone){
-				if (!bone)
+				if (bone!=null)
 				{
 					// throw
 				}
 				
-				if (bone._parent)
+				if (bone._parent!=null)
 				{
 					bone._parent.removeChild(bone);
 				}
@@ -168,7 +172,7 @@ namespace DragonBones
 				
 				Bone boneParent = getBone(parentBoneName);
 				
-				if (!boneParent)
+				if (boneParent==null)
 				{
 					// throw
 				}
@@ -177,12 +181,12 @@ namespace DragonBones
 
 	    }
 		public virtual void removeBone(Bone bone){
-				if (!bone || bone._armature != this)
+				if (bone==null || bone._armature != this)
 				{
 					// throw
 				}
 				
-				if (bone._parent)
+				if (bone._parent!=null)
 				{
 					bone._parent.removeChild(bone);
 				}
@@ -200,7 +204,7 @@ namespace DragonBones
 				
 				Bone bone = getBone(boneName);
 				
-				if (bone)
+				if (bone!=null)
 				{
 					removeBone(bone);
 				}
@@ -228,12 +232,12 @@ namespace DragonBones
 		}
 		public virtual Slot getSlotByDisplay(object display){
 				
-				if (!display)
+				if (display==null)
 				{
 					// throw
 				}
 				
-				for (int i = 0; l < _slotList.Count;  ++i)
+				for (int i = 0; i < _slotList.Count;  ++i)
 				{
 					if (_slotList[i]._display == display)
 					{
@@ -247,7 +251,7 @@ namespace DragonBones
 		public virtual void addSlot(Slot slot, string parentBoneName){
 				Bone bone = getBone(parentBoneName);
 				
-				if (!bone)
+				if (bone==null)
 				{
 					// throw
 				}
@@ -256,7 +260,7 @@ namespace DragonBones
 
 		}
 		public virtual void removeSlot(Slot slot){
-				if (!slot || slot._armature != this)
+				if (slot==null || slot._armature != this)
 				{
 					// throw
 				}
@@ -266,7 +270,7 @@ namespace DragonBones
 		public virtual Slot removeSlot(string slotName){
 				Slot slot = getSlot(slotName);
 				
-				if (slot)
+				if (slot!=null)
 				{
 					removeSlot(slot);
 				}
@@ -276,7 +280,7 @@ namespace DragonBones
 		}
 		public virtual void replaceSlot(string boneName, string oldSlotName, Slot newSlot){
 				Bone bone = getBone(boneName);
-				if (!bone) return;
+				if (bone==null) return;
 				
 				List<Slot> slots = bone.getSlots();
 
@@ -328,7 +332,7 @@ namespace DragonBones
 		}
 		
 		public virtual void invalidUpdate(){
-				for (int i = 0; l = _boneList.Count;  ++i)
+				for (int i = 0; i < _boneList.Count;  ++i)
 				{
 					_boneList[i].invalidUpdate();
 				}
@@ -342,7 +346,7 @@ namespace DragonBones
 				
 				Bone bone = getBone(boneName);
 				
-				if (bone)
+				if (bone!=null)
 				{
 					bone.invalidUpdate();
 				}
@@ -353,19 +357,19 @@ namespace DragonBones
 				_lockDispose = true;
 				_animation.advanceTime(passedTime);
 				passedTime *= _animation._timeScale;
-				const bool isFading = _animation._isFading;
+			    bool isFading = _animation._isFading;
 				
-				for (int i = _boneList.Count; i>0; i--)
+				for (int i = _boneList.Count; i>=0; i--)
 				{
 					_boneList[i].update(isFading);
 				}
 				
-				for (int i = _slotList.Count; i>0; i--)
+				for (int i = _slotList.Count; i>=0; i--)
 				{
 					Slot slot = _slotList[i];
 					slot.update();
 					
-					if (slot._isShowDisplay && slot._childArmature)
+					if (slot._isShowDisplay && slot._childArmature!=null)
 					{
 						slot._childArmature.advanceTime(passedTime);
 					}
@@ -384,7 +388,7 @@ namespace DragonBones
 					#endif
 				}
 				
-				if (!_eventDataList.Count<=0)
+				if (_eventDataList.Count>0)
 				{
 					for (int i = 0; i< _eventDataList.Count;  ++i)
 					{
@@ -409,7 +413,7 @@ namespace DragonBones
 				Bone bone = obj as Bone;
 				Slot slot = obj as Slot;
 				
-				if (bone)
+				if (bone!=null)
 				{
 
 
@@ -419,14 +423,14 @@ namespace DragonBones
 
 				} );
 					
-					if (!iterator)
+					if (iterator==null)
 					{
 						_boneList.Add(bone);
 						sortBones();
 						_animation.updateAnimationStates();
 					}
 				}
-				else if (slot)
+				else if (slot!=null)
 				{
 					Slot iterator = _slotList.Find(delegate (Slot tmp){
 						return slot == tmp;
@@ -435,7 +439,7 @@ namespace DragonBones
 					} );
 
 					
-					if (!iterator )
+					if (iterator==null )
 					{
 						_slotList.Add(slot);
 					}
@@ -446,7 +450,7 @@ namespace DragonBones
 				Bone bone = obj as Bone;
 				Slot slot = obj as Slot;
 				
-				if (bone)
+				if (bone!=null)
 				{
 					if(_boneList.IndexOf(bone)>=0)
 					{
@@ -454,7 +458,7 @@ namespace DragonBones
 						_animation.updateAnimationStates();
 					}
 				}
-				else if (slot)
+				else if (slot!=null)
 				{
 				   if(_slotList.IndexOf(slot)>=0)
 					{
@@ -470,7 +474,7 @@ namespace DragonBones
 				return;
 			}
 			
-			List< KeyValuePair<int , Bone>> sortedList;
+			List< KeyValuePair<int , Bone>> sortedList = new List<KeyValuePair<int, Bone>>();
 			
 			for (int i = 0; i < _boneList.Count;  ++i)
 			{
@@ -478,7 +482,7 @@ namespace DragonBones
 				Bone parentBone = bone;
 				int level = 0;
 				
-				while (parentBone)
+				while (parentBone!=null)
 				{
 					parentBone = parentBone._parent;
 					++level;
@@ -501,7 +505,7 @@ namespace DragonBones
 		
 		public virtual void arriveAtFrame(Frame frame, AnimationState animationState, bool isCross)
 		{
-			if (!frame.evt.Length<=0 && _eventDispatcher.HasEvent(EventData.EventType.ANIMATION_FRAME_EVENT))
+			if (frame.evt.Length>0 && _eventDispatcher.HasEvent(EventData.ANIMATION_FRAME_EVENT))
 			{
 				EventData eventData = EventData.borrowObject(EventData.EventType.ANIMATION_FRAME_EVENT);
 				eventData.armature = this;
@@ -511,7 +515,7 @@ namespace DragonBones
 				_eventDataList.Add(eventData);
 			}
 
-			if (!frame.sound.Length<=0 && soundEventDispatcher && soundEventDispatcher.HasEvent(EventData.EventType.SOUND))
+			if (frame.sound.Length>0 && soundEventDispatcher!=null && soundEventDispatcher.HasEvent(EventData.SOUND))
 			{
 				EventData eventData = EventData.borrowObject(EventData.EventType.SOUND);
 				eventData.armature = this;
@@ -520,7 +524,7 @@ namespace DragonBones
 				soundEventDispatcher.DispatchEvent(eventData);
 			}
 			
-			if (!frame.action.Length<=0)
+			if (frame.action.Length>0)
 			{
 				if (animationState.displayControl)
 				{
@@ -528,6 +532,78 @@ namespace DragonBones
 				}
 			}
 		}
+
+
+		public void dispose()
+		{
+			_delayDispose = true;
+			if(_animation==null || _lockDispose)
+			{
+				return;
+			}
+
+			if (_animation!=null)
+			{
+				_animation.dispose();
+				//delete _animation;
+				_animation = null;
+			}
+			
+			//
+			for (int i = 0; i < _boneList.Count;  ++i)
+			{
+				if (_boneList[i]!=null)
+				{
+					_boneList[i].dispose();
+					//delete _boneList[i];
+					_boneList[i] = null;
+				}
+			}
+			
+			//
+			for (int i = 0; i < _slotList.Count;  ++i)
+			{
+				if (_slotList[i]!=null)
+				{
+					_slotList[i].dispose();
+					//delete _slotList[i];
+					_slotList[i] = null;
+				}
+			}
+
+			//
+			for (int i = 0; i < _eventDataList.Count;  ++i)
+			{
+				if (_eventDataList[i]!=null)
+				{
+					EventData.returnObject(_eventDataList[i]);
+				}
+			}
+			
+			//
+			_boneList.Clear();
+			_slotList.Clear();
+			_eventDataList.Clear();
+			
+			if (_eventDispatcher!=null)
+			{
+				//_eventDispatcher.dispose();
+				//delete _eventDispatcher;
+				_eventDispatcher = null;
+			}
+			
+			if (_display!=null)
+			{
+				_display = null;
+			}
+			
+			if (userData!=null)
+			{
+				//delete userData;
+				userData = null;
+			}
+		}
+
 
 
 

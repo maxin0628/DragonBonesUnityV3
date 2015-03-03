@@ -55,7 +55,7 @@ namespace DragonBones
 		
 		public virtual bool getIsComplete()
 		{
-			if (_lastAnimationState)
+			if (_lastAnimationState!=null)
 			{
 				if (!_lastAnimationState._isComplete)
 				{
@@ -139,7 +139,7 @@ namespace DragonBones
 				}
 			}
 			
-			if (!animationData)
+			if (animationData == null)
 			{
 				//assert (0);
 				//throw std::runtime_error("No animation data.");
@@ -233,7 +233,7 @@ namespace DragonBones
 			{
 				Slot slot = _armature.getSlots()[i];
 				
-				if (slot._childArmature && slot._childArmature._animation.hasAnimation(animationName))
+				if (slot._childArmature!=null && slot._childArmature._animation.hasAnimation(animationName))
 				{
 					slot._childArmature._animation.gotoAndPlay(animationName, fadeInTime);
 				}
@@ -257,7 +257,7 @@ namespace DragonBones
 		{
 			AnimationState animationState = getState(animationName, layer);
 			
-			if (!animationState)
+			if (animationState==null)
 			{
 				animationState = gotoAndPlay(animationName, fadeInTime, duration, -1, layer, group, fadeOutMode);
 			}
@@ -278,12 +278,12 @@ namespace DragonBones
 		
 		public virtual void play()
 		{
-			if (_animationDataList.Count)
+			if (_animationDataList.Count<=0)
 			{
 				return;
 			}
 			
-			if (!_lastAnimationState)
+			if (_lastAnimationState == null)
 			{
 				gotoAndPlay(_animationDataList[0].name);
 			}
@@ -392,6 +392,22 @@ namespace DragonBones
 				_animationStateList[i].updateTimelineStates();
 			}
 		}
+
+		public void dispose()
+		{
+			_animationDataList.Clear();
+			
+			for (int i = 0; i < _animationStateList.Count;  ++i)
+			{
+				AnimationState.returnObject(_animationStateList[i]);
+			}
+			
+			_animationStateList.Clear();
+			_armature = null;
+			_lastAnimationState = null;
+		}
+
+
 	}
 
 		

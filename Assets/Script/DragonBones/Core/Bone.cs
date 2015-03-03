@@ -16,15 +16,22 @@ namespace DragonBones
 		public class Bone: DBObject
 		{
 
-	
-	      private static bool sortState(TimelineState a,  TimelineState b);
+	    //TODO: check it!!!
+	    private static int sortState(TimelineState a,  TimelineState b)
+		{
+			if(a._animationState.getLayer() < b._animationState.getLayer())
+			 return -1;
+			else
+			  return 1;
+		}
+		
 		
 	
-		  public string displayController;
+		public string displayController;
 		
 	
-	     public bool _isColorChanged;
-	     public int _needUpdate;
+	    public bool _isColorChanged;
+	    public int _needUpdate;
 		
 		public Point _tweenPivot;
 		protected Transform _tween;
@@ -37,7 +44,7 @@ namespace DragonBones
 		{
 			_isColorChanged = false;
 			_needUpdate = 2;
-			_tween.ScaleX = _tween.ScaleY = 0.f;
+			_tween.ScaleX = _tween.ScaleY = 0.0f;
 			inheritRotation = true;
 			inheritScale = false;
 
@@ -52,11 +59,33 @@ namespace DragonBones
 		}
 
 	
-		public	virtual Slot getSlot() ;
-		public	virtual  List<Slot> getSlots();
-		public	virtual  List<Bone> getBones();
+		public	virtual Slot getSlot() 
+		{
+			return _slotList.Count<=0 ? null : _slotList[0];
+
+		}
+		public	virtual  List<Slot> getSlots()
+		{
+			return _slotList;
+		}
+		public	virtual  List<Bone> getBones()
+		{
+			return _boneList;
+		}
 		
-		public	virtual void setVisible(bool vislble) ;
+		public	virtual void setVisible(bool visible) 
+		{
+			if (_visible != visible)
+			{
+				_visible = visible;
+				
+				for (int i = 0; i < _slotList.Count; ++i)
+				{
+					_slotList[i].updateDisplayVisible(_visible);
+				}
+			}
+		}
+
 
 		public	virtual void invalidUpdate()
 		{
@@ -64,7 +93,7 @@ namespace DragonBones
 		}
 		public	virtual bool contains( DBObject obj)
 		{
-			if (!obj)
+			if (obj==null)
 			{
 				// throw
 			}
@@ -86,31 +115,31 @@ namespace DragonBones
 
 		public	virtual void addChild(DBObject obj)
 		{
-			if (!obj)
+			if (obj==null)
 			{
 				// throw
 			}
 			
-			Bone bone = obj;
-			Slot slot = obj;
+			Bone bone = obj as Bone;
+			Slot slot = obj as Slot;
 			
-			if (obj == this || (bone && bone.contains(this)))
+			if (obj == this || (bone!=null && bone.contains(this)))
 			{
 				//throw std::invalid_argument("An Bone cannot be added as a child to itself or one of its children (or children's children, etc.)");
 			}
 
-			if (obj && obj.getParent())
+			if (obj!=null && obj.getParent()!=null)
 			{
 				obj.getParent().removeChild(obj);
 			}
 			
-			if (bone)
+			if (bone!=null)
 			{
 				_boneList.Add(bone);
 				bone.setParent(this);
 				bone.setArmature(_armature);
 			}
-			else if (slot)
+			else if (slot!=null)
 			{
 				_slotList.Add(slot);
 				slot.setParent(this);
@@ -120,15 +149,15 @@ namespace DragonBones
 
 		public	virtual void removeChild(Object obj)
 		{
-			if (!obj)
+			if (obj==null)
 			{
 				// throw
 			}
 			
-			Bone bone = (obj);
-			Slot slot = (obj);
+			Bone bone = (obj as Bone);
+			Slot slot = (obj as Slot);
 			
-			if (bone)
+			if (bone!=null)
 			{
 
 				
@@ -143,7 +172,7 @@ namespace DragonBones
 					// throw
 				}
 			}
-			else if (slot)
+			else if (slot!=null)
 			{
 				//auto iterator = std::find(_slotList.begin(), _slotList.end(), slot);
 				
@@ -166,7 +195,7 @@ namespace DragonBones
 		{
 			_needUpdate --;
 			
-			if (needUpdate || _needUpdate > 0 || (_parent && _parent._needUpdate > 0))
+			if (needUpdate || _needUpdate > 0 || (_parent!=null && _parent._needUpdate > 0))
 			{
 				_needUpdate = 1;
 			}
@@ -179,7 +208,7 @@ namespace DragonBones
 			global.ScaleX = (origin.ScaleX + _tween.ScaleX) * offset.ScaleX;
 			global.ScaleY = (origin.ScaleY + _tween.ScaleY) * offset.ScaleY;
 			
-			if (_parent)
+			if (_parent!=null)
 			{
 				float x = origin.X + offset.X + _tween.X;
 				float y = origin.Y + offset.Y + _tween.Y;
@@ -218,10 +247,10 @@ namespace DragonBones
     globalTransformMatrix.c = -global.scaleY * sin(global.skewX);
     globalTransformMatrix.d = global.scaleY * cos(global.skewX);
     */
-			globalTransformMatrix.A = offset.ScaleX * Math.Cos(global.SkewY);
-			globalTransformMatrix.B = offset.ScaleX * Math.Sin(global.SkewY);
-			globalTransformMatrix.C = -offset.ScaleY * Math.Sin(global.SkewX);
-			globalTransformMatrix.D = offset.ScaleY * Math.Cos(global.SkewX);
+			globalTransformMatrix.A = offset.ScaleX * (float)Math.Cos(global.SkewY);
+			globalTransformMatrix.B = offset.ScaleX * (float)Math.Sin(global.SkewY);
+			globalTransformMatrix.C = -offset.ScaleY * (float)Math.Sin(global.SkewX);
+			globalTransformMatrix.D = offset.ScaleY * (float)Math.Cos(global.SkewX);
 		}
 
 		public virtual void updateColor(
@@ -268,7 +297,7 @@ namespace DragonBones
 
 			if (displayControl && timelineState._weight > 0)
 			{
-				const int displayIndex = frame.displayIndex;
+			    int displayIndex = frame.displayIndex;
 				
 				for (int i = 0; i < _slotList.Count; ++i)
 				{
@@ -287,7 +316,7 @@ namespace DragonBones
 				}
 
 
-				if (!frame.evt.Length<0 && _armature._eventDispatcher.HasEvent(EventData.EventType.BONE_FRAME_EVENT))
+				if (frame.evt.Length>0 && _armature._eventDispatcher.HasEvent(EventData.BONE_FRAME_EVENT))
 				{
 					EventData eventData = EventData.borrowObject(EventData.EventType.BONE_FRAME_EVENT);
 					eventData.armature = _armature;
@@ -298,9 +327,9 @@ namespace DragonBones
 					_armature._eventDataList.Add(eventData);
 				}
 				
-				if (!frame.sound.Length<=0 && Armature.soundEventDispatcher && Armature.soundEventDispatcher.HasEvent(EventData.EventType.SOUND))
+				if (frame.sound.Length>0 && Armature.soundEventDispatcher!=null && Armature.soundEventDispatcher.HasEvent(EventData.SOUND))
 				{
-					EventData eventData = EventData.borrowObject(EventData::EventType::SOUND);
+					EventData eventData = EventData.borrowObject(EventData.EventType.SOUND);
 					eventData.armature = _armature;
 					eventData.bone = this;
 					eventData.animationState = animationState;
@@ -308,11 +337,11 @@ namespace DragonBones
 					Armature.soundEventDispatcher.DispatchEvent(eventData);
 				}
 				
-				if (!frame.action.Length<=0)
+				if (frame.action.Length>0)
 				{
 					for (int i = 0; i<= _slotList.Count;  ++i)
 					{
-						if (_slotList[i]._childArmature)
+						if (_slotList[i]._childArmature!=null)
 						{
 							_slotList[i]._childArmature._animation.gotoAndPlay(frame.action);
 						}
@@ -375,7 +404,7 @@ namespace DragonBones
 				float pivotX = 0f;
 				float pivotY = 0f;
 				
-				while (i--)
+				while ((i--) != 0)
 				{
 					TimelineState timelineState = _timelineStateList[i];
 					currentLayer = timelineState._animationState.getLayer();
@@ -398,7 +427,7 @@ namespace DragonBones
 					float weight = timelineState._weight;
 					
 					//timelineState
-					if (weight && timelineState._blendEnabled)
+					if (weight!=0 && timelineState._blendEnabled)
 					{
 						Transform transform = timelineState._transform;
 						Point pivot = timelineState._pivot;
@@ -429,7 +458,7 @@ namespace DragonBones
 	 
 		protected	virtual void setArmature(Armature armature)
 		{
-			DBObject.setArmature(armature);
+			base.setArmature(armature);
 			
 			for (int i = 0; i <= _boneList.Count;  ++i)
 			{
@@ -447,3 +476,4 @@ namespace DragonBones
 		}
 }
 
+}

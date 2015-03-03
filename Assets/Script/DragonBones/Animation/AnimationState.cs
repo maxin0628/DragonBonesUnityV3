@@ -9,7 +9,7 @@
 // ------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using DragonBones.Core;
+
 namespace DragonBones
 {
 		public class AnimationState
@@ -191,17 +191,17 @@ namespace DragonBones
 		}
 		public float getCurrentTime() 
 		{
-			return _currentTime < 0 ? 0.f : _currentTime * 0.001f;
+			return _currentTime < 0 ? 0.0f : _currentTime * 0.001f;
 		}
 		public AnimationState setCurrentTime(float currentTime)
 		{
 			if (currentTime < 0 || currentTime != currentTime)
 			{
-				currentTime = 0.f;
+				currentTime = 0.0f;
 			}
 			
 			_time = currentTime;
-			_currentTime = (int)(_time * 1000.f);
+			_currentTime = (int)(_time * 1000.0f);
 			return this;
 		}
 		
@@ -213,7 +213,7 @@ namespace DragonBones
 		{
 			if (timeScale != timeScale)
 			{
-				timeScale = 1.f;
+				timeScale = 1.0f;
 			}
 			
 			_timeScale = timeScale;
@@ -244,13 +244,13 @@ namespace DragonBones
 				_currentTime = -1;
 			}
 			
-			_time = 0.f;
-			_mixingTransforms.clear();
+			_time = 0.0f;
+			_mixingTransforms.Clear();
 			// fade start
 			_isFadeOut = false;
-			_fadeWeight = 0.f;
-			_fadeTotalWeight = 1.f;
-			_fadeCurrentTime = 0.f;
+			_fadeWeight = 0.0f;
+			_fadeTotalWeight = 1.0f;
+			_fadeCurrentTime = 0.0f;
 			_fadeBeginTime = _fadeCurrentTime;
 			_fadeTotalTime = fadeTotalTime * _timeScale;
 			_fadeState = FadeState.FADE_BEFORE;
@@ -259,7 +259,7 @@ namespace DragonBones
 			displayControl = true;
 			lastFrameAutoTween = true;
 			additiveBlending = false;
-			weight = 1.f;
+			weight = 1.0f;
 			fadeOutTime = fadeTotalTime;
 			updateTimelineStates();
 		}
@@ -268,7 +268,7 @@ namespace DragonBones
 		{
 			if (!(fadeTotalTime >= 0))
 			{
-				fadeTotalTime = 0.f;
+				fadeTotalTime = 0.0f;
 			}
 			
 			_pausePlayheadInFade = pausePlayhead;
@@ -293,7 +293,7 @@ namespace DragonBones
 			_fadeTotalWeight = _fadeWeight;
 			_fadeState = FadeState.FADE_BEFORE;
 			_fadeBeginTime = _fadeCurrentTime;
-			_fadeTotalTime = _fadeTotalWeight >= 0 ? fadeTotalTime * _timeScale : 0.f;
+			_fadeTotalTime = _fadeTotalWeight >= 0 ? fadeTotalTime * _timeScale : 0.0f;
 			// default
 			displayControl = false;
 			return this;
@@ -334,9 +334,9 @@ namespace DragonBones
 					}
 					
 					if (
-						currentBone &&
+						currentBone!= null &&
 						(currentBone == bone || currentBone.contains(bone)) &&
-						_clip.getTimeline(boneName) &&
+						_clip.getTimeline(boneName)!=null &&
 						_mixingTransforms.IndexOf (boneName) < 0 
 						)
 					{
@@ -345,7 +345,7 @@ namespace DragonBones
 				}
 			}
 			else if (
-				_clip.getTimeline(timelineName) &&
+				_clip.getTimeline(timelineName)!= null &&
 				_mixingTransforms.IndexOf (timelineName) < 0
 				)
 			{
@@ -372,7 +372,7 @@ namespace DragonBones
 						currentBone = bone;
 					}
 					
-					if (currentBone && (currentBone == bone || currentBone.contains(bone)))
+					if (currentBone!=null && (currentBone == bone || currentBone.contains(bone)))
 					{
 
 						if (_mixingTransforms.IndexOf(bone.name) >= 0 )
@@ -397,7 +397,7 @@ namespace DragonBones
 
 		public AnimationState removeAllMixingTransform()
 		{
-			_mixingTransforms.RemoveAll();
+			_mixingTransforms.Clear();
 			updateTimelineStates();
 			return this;
 		}
@@ -407,7 +407,7 @@ namespace DragonBones
 			passedTime *= _timeScale;
 			advanceFadeTime(passedTime);
 			
-			if (_fadeWeight)
+			if (_fadeWeight!=0)
 			{
 				advanceTimelinesTime(passedTime);
 			}
@@ -421,7 +421,7 @@ namespace DragonBones
 			{
 				TimelineState timelineState = _timelineStateList[i];
 				
-				if (!_armature.getBone(timelineState.name))
+				if (_armature.getBone(timelineState.name) == null)
 				{
 					removeTimelineState(timelineState);
 				}
@@ -457,7 +457,7 @@ namespace DragonBones
 		{
 			Bone bone = _armature.getBone(timelineName);
 			
-			if (bone)
+			if (bone!=null)
 			{
 				for (int i = 0; i < _timelineStateList.Count;  ++i)
 				{
@@ -507,7 +507,7 @@ namespace DragonBones
 						}
 					}
 					
-					_fadeWeight = _isFadeOut ? 0.f : 1.f;
+					_fadeWeight = _isFadeOut ? 0.0f : 1.0f;
 				}
 				else if (_fadeCurrentTime >= _fadeBeginTime)
 				{
@@ -524,7 +524,7 @@ namespace DragonBones
 				{
 					// fade before
 					fadeState = FadeState.FADE_BEFORE;
-					_fadeWeight = _isFadeOut ? 1.f : 0.f;
+					_fadeWeight = _isFadeOut ? 1.0f : 0.0f;
 				}
 				
 				if (_fadeState != fadeState)
@@ -559,7 +559,7 @@ namespace DragonBones
 					eventDataType = EventData.EventType.FADE_IN;
 				}
 				
-				if (_armature._eventDispatcher.HasEvent(eventDataType))
+				if (_armature._eventDispatcher.HasEvent(EventData.typeToString(eventDataType)))
 				{
 					EventData eventData = EventData.borrowObject(eventDataType);
 					eventData.armature = _armature;
@@ -581,7 +581,7 @@ namespace DragonBones
 					eventDataType = EventData.EventType.FADE_IN_COMPLETE;
 				}
 				
-				if (_armature._eventDispatcher.HasEvent(eventDataType))
+				if (_armature._eventDispatcher.HasEvent(EventData.typeToString(eventDataType)))
 				{
 					EventData eventData = EventData.borrowObject(eventDataType);
 					eventData.armature = _armature;
@@ -604,7 +604,7 @@ namespace DragonBones
 			bool loopCompleteFlg = false;
 			bool isThisComplete = false;
 			int currentPlayTimes = 0;
-			int currentTime = (int)(_time * 1000.f);
+			int currentTime = (int)(_time * 1000.0f);
 			
 			if (_playTimes == 0)
 			{
@@ -657,7 +657,7 @@ namespace DragonBones
 			
 			// update timeline
 			_isComplete = isThisComplete;
-			float progress = _time * 1000.f / (float)(_totalTime);
+			float progress = _time * 1000.0f / (float)(_totalTime);
 			
 			for (int i = 0; i < _timelineStateList.Count;  ++i)
 			{
@@ -694,7 +694,7 @@ namespace DragonBones
 			
 			if (startFlg)
 			{
-				if (_armature._eventDispatcher.HasEvent(EventData.EventType.START))
+				if (_armature._eventDispatcher.HasEvent(EventData.START))
 				{
 					EventData eventData = EventData.borrowObject(EventData.EventType.START);
 					eventData.armature = _armature;
@@ -705,7 +705,7 @@ namespace DragonBones
 			
 			if (completeFlg)
 			{
-				if (_armature._eventDispatcher.HasEvent(EventData.EventType.COMPLETE))
+				if (_armature._eventDispatcher.HasEvent(EventData.COMPLETE))
 				{
 					EventData eventData = EventData.borrowObject(EventData.EventType.COMPLETE);
 					eventData.armature = _armature;
@@ -720,7 +720,7 @@ namespace DragonBones
 			}
 			else if (loopCompleteFlg)
 			{
-				if (_armature._eventDispatcher.HasEvent(EventData.EventType.LOOP_COMPLETE))
+				if (_armature._eventDispatcher.HasEvent(EventData.LOOP_COMPLETE))
 				{
 					EventData eventData = EventData.borrowObject(EventData.EventType.LOOP_COMPLETE);
 					eventData.armature = _armature;
@@ -732,7 +732,7 @@ namespace DragonBones
 
 		public void updateMainTimeline(bool isThisComplete)
 		{
-			if (!_clip.frameList.Count <=0)
+			if (_clip.frameList.Count >0)
 			{
 				Frame prevFrame = null;
 				Frame currentFrame = null;
@@ -767,7 +767,7 @@ namespace DragonBones
 					
 					currentFrame = _clip.frameList[_currentFrameIndex];
 					
-					if (prevFrame)
+					if (prevFrame!=null)
 					{
 						_armature.arriveAtFrame(prevFrame, this, true);
 					}
@@ -777,7 +777,7 @@ namespace DragonBones
 					prevFrame = currentFrame;
 				}
 				
-				if (currentFrame)
+				if (currentFrame!=null)
 				{
 					_armature.arriveAtFrame(currentFrame, this, false);
 				}
@@ -791,7 +791,7 @@ namespace DragonBones
 			{
 				Bone bone = _armature.getBone(_clip.hideTimelineList[i]);
 				
-				if (bone)
+				if (bone!=null)
 				{
 					bone.hideSlots();
 				}
@@ -807,8 +807,8 @@ namespace DragonBones
 				TimelineState.returnObject(_timelineStateList[i]);
 			}
 			
-			_timelineStateList.RemoveAll();
-			_mixingTransforms.RemoveAll();
+			_timelineStateList.Clear();
+			_mixingTransforms.Clear();
 			_armature = null;
 			_clip = null;
 		}
