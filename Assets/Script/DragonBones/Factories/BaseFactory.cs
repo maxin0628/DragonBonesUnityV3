@@ -143,54 +143,52 @@ namespace DragonBones
 		_textureAtlasMap.Clear();
 	}
 	
-	Armature* BaseFactory::buildArmature(const std::string &armatureName) const
+	public Armature buildArmature(string armatureName) 
 	{
 		return buildArmature(armatureName, "", armatureName, "", "");
 	}
 	
-	Armature* BaseFactory::buildArmature(const std::string &armatureName, const std::string &dragonBonesName) const
+	public Armature buildArmature(string armatureName, string dragonBonesName) 
 	{
 		return buildArmature(armatureName, "", armatureName, dragonBonesName, dragonBonesName);
 	}
 	
-	Armature* BaseFactory::buildArmature(const std::string &armatureName, const std::string &skinName, const std::string &animationName, const std::string &dragonBonesName, const std::string &textureAtlasName) const
+	public Armature buildArmature(string armatureName, string skinName, string animationName, string dragonBonesName, string textureAtlasName) 
 	{
-		DragonBonesData *dragonBonesData = nullptr;
-		ArmatureData *armatureData = nullptr;
-		ArmatureData *animationArmatureData = nullptr;
-		SkinData *skinData = nullptr;
-		SkinData *skinDataCopy = nullptr;
+		DragonBonesData dragonBonesData = null;
+		ArmatureData armatureData = null;
+		ArmatureData animationArmatureData = null;
+		SkinData skinData = null;
+		SkinData skinDataCopy = null;
 		
-		if (!dragonBonesName.empty())
+		if (dragonBonesName.Length>0)
 		{
-			auto iterator = _dragonBonesDataMap.find(dragonBonesName);
-			
-			if (iterator != _dragonBonesDataMap.end())
+			if (_dragonBonesDataMap.ContainsKey(dragonBonesName))
 			{
-				dragonBonesData = iterator.second;
+				dragonBonesData = _dragonBonesDataMap[dragonBonesName];
 				armatureData = dragonBonesData.getArmatureData(armatureName);
 				_currentDragonBonesDataName = dragonBonesName;
-				_currentTextureAtlasName = textureAtlasName.empty() ? _currentDragonBonesDataName : textureAtlasName;
+				_currentTextureAtlasName = textureAtlasName.Length<=0 ? _currentDragonBonesDataName : textureAtlasName;
 			}
 		}
 		
 		if (!armatureData)
 		{
-			AutoSearchType searchType = (dragonBonesName.empty() ? AutoSearchType::AST_ALL : (autoSearchDragonBonesData ? AutoSearchType::AST_AUTO : AutoSearchType::AST_NONE));
+			AutoSearchType searchType = (dragonBonesName.Length<=0 ? AutoSearchType.AST_ALL : (autoSearchDragonBonesData ? AutoSearchType.AST_AUTO : AutoSearchType.AST_NONE));
 			
-			if (searchType != AutoSearchType::AST_NONE)
+			if (searchType != AutoSearchType.AST_NONE)
 			{
-				for (auto iterator = _dragonBonesDataMap.begin(); iterator != _dragonBonesDataMap.end(); ++iterator)
+				foreach (KeyValuePair<string, DragonBonesData> obj in _dragonBonesDataMap)
 				{
-					dragonBonesData = iterator.second;
+				    dragonBonesData = obj.Value;
 					
-					if (searchType == AutoSearchType::AST_ALL || dragonBonesData.autoSearch)
+					if (searchType == AutoSearchType.AST_ALL || dragonBonesData.autoSearch)
 					{
 						armatureData = dragonBonesData.getArmatureData(armatureName);
 						
 						if (armatureData)
 						{
-							_currentDragonBonesDataName = iterator.first;
+								_currentDragonBonesDataName = obj.Key;
 							_currentTextureAtlasName = _currentDragonBonesDataName;
 							break;
 						}
@@ -201,18 +199,18 @@ namespace DragonBones
 		
 		if (!armatureData)
 		{
-			return nullptr;
+			return null;
 		}
 		
-		if (!animationName.empty() && animationName != armatureName)
+		if (animationName.Length>0 && animationName != armatureName)
 		{
 			animationArmatureData = dragonBonesData.getArmatureData(animationName);
 			
 			if (!animationArmatureData)
 			{
-				for (auto iterator = _dragonBonesDataMap.begin(); iterator != _dragonBonesDataMap.end(); ++iterator)
+				foreach (KeyValuePair<string, DragonBonesData> iterator in _dragonBonesDataMap)
 				{
-					dragonBonesData = iterator.second;
+					dragonBonesData = iterator.Value;
 					animationArmatureData = dragonBonesData.getArmatureData(animationName);
 					
 					if (animationArmatureData)
@@ -229,7 +227,7 @@ namespace DragonBones
 		}
 		
 		skinData = armatureData.getSkinData(skinName);
-		Armature *armature = generateArmature(armatureData);
+		Armature armature = generateArmature(armatureData);
 		armature.name = armatureName;
 		
 		if (animationArmatureData)
@@ -257,33 +255,31 @@ namespace DragonBones
 		return armature;
 	}
 	
-	void* BaseFactory::getTextureDisplay(const std::string &textureName, const std::string &textureAtlasName, const DisplayData *displayData) const
+	public void getTextureDisplay(string textureName, string textureAtlasName, DisplayData displayData) 
 	{
-		ITextureAtlas *textureAtlas = nullptr;
-		TextureData *textureData = nullptr;
+		ITextureAtlas textureAtlas = null;
+		TextureData textureData = null;
 		
-		if (!textureAtlasName.empty())
+		if (textureAtlasName.Length>0)
 		{
-			auto iterator = _textureAtlasMap.find(textureAtlasName);
-			
-			if (iterator != _textureAtlasMap.end())
+			if (_textureAtlasMap.ContainsKey(textureAtlasName))
 			{
-				textureAtlas = iterator.second;
+				textureAtlas = _textureAtlasMap[textureAtlasName];
 				textureData = textureAtlas.textureAtlasData.getTextureData(textureName);
 			}
 		}
 		
-		if (!textureData)
+		if (textureData==null)
 		{
-			AutoSearchType searchType = (textureAtlasName.empty() ? AutoSearchType::AST_ALL : (autoSearchTexture ? AutoSearchType::AST_AUTO : AutoSearchType::AST_NONE));
+			AutoSearchType searchType = (textureAtlasName.Length<=0 ? AutoSearchType.AST_ALL : (autoSearchTexture ? AutoSearchType.AST_AUTO : AutoSearchType.AST_NONE));
 			
-			if (searchType != AutoSearchType::AST_NONE)
+			if (searchType != AutoSearchType.AST_NONE)
 			{
-				for (auto iterator = _textureAtlasMap.begin(); iterator != _textureAtlasMap.end(); ++iterator)
+				foreach (KeyValuePair<string, TextureData> iterator in _textureAtlasMap)
 				{
-					textureAtlas = iterator.second;
+						textureAtlas = iterator.Value;
 					
-					if (searchType == AutoSearchType::AST_ALL || textureAtlas.textureAtlasData.autoSearch)
+					if (searchType == AutoSearchType.AST_ALL || textureAtlas.textureAtlasData.autoSearch)
 					{
 						textureData = textureAtlas.textureAtlasData.getTextureData(textureName);
 						
@@ -296,32 +292,31 @@ namespace DragonBones
 			}
 		}
 		
-		if (!textureData)
+		if (textureData==null)
 		{
-			return nullptr;
+			return null;
 		}
 		
-		if (!displayData)
+		if (displayData==null)
 		{
-			auto iterator = _dragonBonesDataMap.find(textureAtlas.textureAtlasData.name);
 			
-			if (iterator != _dragonBonesDataMap.end())
+			if (_dragonBonesDataMap.ContainsKey(textureAtlas.textureAtlasData.name))
 			{
-				DragonBonesData *dragonBonesData = iterator.second;
+				DragonBonesData *dragonBonesData = _dragonBonesDataMap[textureAtlas.textureAtlasData.name];
 				
-				for (size_t i = 0, l = dragonBonesData.armatureDataList.size(); i < l; ++i)
+				for (int i = 0; i < dragonBonesData.armatureDataList.Count;  ++i)
 				{
-					for (size_t j = 0, l = dragonBonesData.armatureDataList[i].skinDataList.size(); j < l; ++j)
+						for (int j = 0; j < dragonBonesData.armatureDataList[i].skinDataList.Count;  ++j)
 					{
-						for (size_t k = 0, l = dragonBonesData.armatureDataList[i].skinDataList[j].slotDataList.size(); k < l; ++k)
+							for (int k = 0; k < dragonBonesData.armatureDataList[i].skinDataList[j].slotDataList.Count; ++k)
 						{
-							for (size_t m = 0, l = dragonBonesData.armatureDataList[i].skinDataList[j].slotDataList[k].displayDataList.size(); m < l; ++m)
+							for (int m = 0; m < dragonBonesData.armatureDataList[i].skinDataList[j].slotDataList[k].displayDataList.Count;  ++m)
 							{
 								displayData = dragonBonesData.armatureDataList[i].skinDataList[j].slotDataList[k].displayDataList[m];
 								
 								if (displayData.name != textureName)
 								{
-									displayData = nullptr;
+									displayData = null;
 								}
 								else
 								{
@@ -352,12 +347,12 @@ namespace DragonBones
 		return generateDisplay(textureAtlas, textureData, displayData);
 	}
 	
-	void BaseFactory::buildBones(Armature *armature, const ArmatureData *armatureData) const
+	public void buildBones(Armature armature, ArmatureData armatureData) 
 	{
-		for (size_t i = 0, l = armatureData.boneDataList.size(); i < l; ++i)
+		for (int i = 0; i < armatureData.boneDataList.Count; ++i)
 		{
-			const BoneData *boneData = armatureData.boneDataList[i];
-			Bone *bone = new Bone();
+		    BoneData boneData = armatureData.boneDataList[i];
+			Bone bone = new Bone();
 			bone.name = boneData.name;
 			bone.inheritRotation = boneData.inheritRotation;
 			bone.inheritScale = boneData.inheritScale;
@@ -375,56 +370,89 @@ namespace DragonBones
 		}
 	}
 	
-	void BaseFactory::buildSlots(Armature *armature, const ArmatureData *armatureData, const SkinData *skinData, const SkinData *skinDataCopy) const
+	public void buildSlots(Armature armature, ArmatureData armatureData, SkinData skinData, SkinData skinDataCopy) 
 	{
-		for (size_t i = 0, l = skinData.slotDataList.size(); i < l; ++i)
+		for (int i = 0; i < skinData.slotDataList.Count;  ++i)
 		{
-			SlotData *slotData = skinData.slotDataList[i];
-			Bone *bone = armature.getBone(slotData.parent);
+			SlotData slotData = skinData.slotDataList[i];
+			Bone bone = armature.getBone(slotData.parent);
 			
 			if (!bone)
 			{
 				continue;
 			}
 			
-			Slot *slot = generateSlot(slotData);
+			Slot slot = generateSlot(slotData);
 			slot.name = slotData.name;
 			slot._originZOrder = slotData.zOrder;
 			slot._slotData = slotData;
-			std::vector<std::pair<void*, DisplayType>> displayList;
-			void *frameDisplay = nullptr;
+			List<std::pair<object, DisplayType>> displayList;
+			object frameDisplay = null;
 			
-			for (size_t j = 0, l = slotData.displayDataList.size(); j < l; ++j)
+			for (int j = 0; j < slotData.displayDataList.Count; ++j)
 			{
-				const DisplayData *displayData = slotData.displayDataList[j];
+				DisplayData displayData = slotData.displayDataList[j];
 				
 				switch (displayData.type)
 				{
-				case DisplayType::DT_ARMATURE:
+				case DragonBones.DisplayType.DT_ARMATURE:
 				{
-					DisplayData *displayDataCopy = nullptr;
+					DisplayData displayDataCopy = null;
 					
 					if (skinDataCopy)
 					{
-						const SlotData *slotDataCopy = skinDataCopy.getSlotData(slotData.name);
+						 SlotData slotDataCopy = skinDataCopy.getSlotData(slotData.name);
 						
 						if (slotDataCopy)
 						{
 							displayDataCopy = slotDataCopy.displayDataList[i];
 						}
 					}
-					std::string currentDragonBonesDataName = _currentDragonBonesDataName;
-					std::string currentTextureAtlasName = _currentTextureAtlasName;
-					Armature *childArmature = buildArmature(displayData.name, "", displayDataCopy ? displayDataCopy.name : "", currentDragonBonesDataName, currentTextureAtlasName);
-					displayList.push_back(std::make_pair(childArmature, DisplayType::DT_ARMATURE));
+					string currentDragonBonesDataName = _currentDragonBonesDataName;
+					string currentTextureAtlasName = _currentTextureAtlasName;
+					Armature childArmature = buildArmature(displayData.name, "", displayDataCopy ? displayDataCopy.name : "", currentDragonBonesDataName, currentTextureAtlasName);
+						displayList.Add(new KeyValuePair<object, DisplayType>(childArmature, DragonBones.DisplayType.DT_ARMATURE));
 					_currentDragonBonesDataName = currentDragonBonesDataName;
 					_currentTextureAtlasName = currentTextureAtlasName;
 					break;
 				}
 					
-				case DisplayType::DT_IMAGE:
+					case DragonBones.DisplayType.DT_IMAGE:
 				{
 
 				}
+					default:
+						displayList.Add(new KeyValuePair<object, DisplayType>(null, DragonBones.DisplayType.DT_IMAGE));
+						break;
+				}
+			}
+				
+			bone.addChild(slot);
+				
+			if (displayList.Count>0)
+			{
+					slot.setDisplayList(displayList, false);
+			}
+
+	   }
+     }
+
+
+
+			
+		protected Armature generateArmature( ArmatureData armatureData)
+		{
+
+		}
+		protected Slot generateSlot( SlotData slotData)
+		{
+
+		}
+		protected void generateDisplay( ITextureAtlas textureAtlas,  TextureData textureData,  DisplayData displayData)
+		{
+
+		}
+  }
+}
 					
 					

@@ -28,6 +28,23 @@ namespace DragonBones
 
 		}
 
+		
+		public void dispose()
+		{
+			zOrder = 0.0f;
+			name = null;
+ 			parent = null;
+			
+			blendMode = DragonBones.BlendMode.BM_NORMAL;
+			
+			//for (int i = 0; i = displayDataList.Count;  ++i)
+			//{
+				//delete displayDataList[i];
+			//}
+			displayDataList.Clear();
+		}
+
+
 		public DisplayData getDisplayData(string displayName) 
 		{
 			for (int i = 0; i < displayDataList.Count;  ++i)

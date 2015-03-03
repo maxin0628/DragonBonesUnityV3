@@ -36,6 +36,18 @@ namespace DragonBones
 		
 		return null;
 	}
+
+	public	void dispose()
+		{
+			for (int i = 0; i < slotDataList.Count; ++i)
+			{
+				slotDataList[i].dispose();
+				//delete slotDataList[i];
+			}
+			
+			slotDataList.Clear();
+		}
+
 	}
 }
 

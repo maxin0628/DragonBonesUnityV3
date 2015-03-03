@@ -37,7 +37,18 @@ namespace DragonBones
 			return null;
 		}
 
-
+		public void dispose()
+		{
+			for (int i = 0; i < armatureDataList.Count; ++i)
+			{
+				armatureDataList[i].dispose();
+				//delete armatureDataList[i];
+			}
+			
+			armatureDataList.Clear();
 		}
+
+
+	}
 }
 

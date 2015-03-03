@@ -58,7 +58,7 @@ namespace DragonBones
 			return null;
 		}
 		
-		BoneData getBoneData(string boneName) 
+		public BoneData getBoneData(string boneName) 
 		{
 			for (int i = 0; i < boneDataList.Count;  ++i)
 			{
@@ -138,6 +138,39 @@ namespace DragonBones
 				boneDataList[i] = sortedList[i].Value;
 			}
 		}
+
+		void dispose()
+		{
+			for (int i = 0; i < areaDataList.Count; ++i)
+			{
+				areaDataList[i].dispose();
+				//delete areaDataList[i];
+			}
+			
+			for (int i = 0; i < boneDataList.Count; ++i)
+			{
+				boneDataList[i].dispose();
+				//delete boneDataList[i];
+			}
+			
+			for (int i = 0; i < skinDataList.Count; ++i)
+			{
+				skinDataList[i].dispose();
+				//delete skinDataList[i];
+			}
+			
+			for (int i = 0; i < animationDataList.Count; ++i)
+			{
+				animationDataList[i].dispose();
+				//delete animationDataList[i];
+			}
+			
+			areaDataList.Clear();
+			boneDataList.Clear();
+			skinDataList.Clear();
+			animationDataList.Clear();
+		}
+
 
 
 		}

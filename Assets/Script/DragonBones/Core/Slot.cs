@@ -27,7 +27,7 @@ namespace DragonBones
 		// <displayOrArmature*, DisplayType>
 		protected List<KeyValuePair<object, DragonBones.DisplayType>> _displayList;
 		
-		protected SlotData _slotData;
+		public SlotData _slotData;
 		public object _display;
 		public Armature _childArmature;
 
