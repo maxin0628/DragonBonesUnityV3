@@ -32,6 +32,27 @@ namespace DragonBones
 
 		}
 
+		public virtual void dispose()
+		{
+			base.dispose();
+			_dispose();
+		}
+
+		private void _dispose()
+		{
+			for (int i = 0; i < timelineList.Count; ++i)
+			{
+				timelineList[i].dispose();
+				//delete timelineList[i];
+			}
+			
+			timelineList.Clear();
+			hideTimelineList.Clear();
+		}
+
+
+
+
 	}
 
 }

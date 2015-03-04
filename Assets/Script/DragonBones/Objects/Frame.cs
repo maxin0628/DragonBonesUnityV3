@@ -31,6 +31,17 @@ namespace DragonBones
 			frameType = FrameType.FT_FRAME;		
 			eventParametersParsed = null;
 		  }
+
+
+		public void dispose() 
+		{
+			if (eventParametersParsed!=null)
+			{
+				//delete eventParametersParsed;
+				eventParametersParsed = null;
+			}
+		}
+
 		}
 }
 

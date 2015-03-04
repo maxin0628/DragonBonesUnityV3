@@ -28,9 +28,9 @@ namespace DragonBones
 		
 
 
-				public BoneData ()
-				{
-				}
+		public BoneData ()
+		{
+		}
 
 		IAreaData getAreaData(string areaName) 
 		{
@@ -54,6 +54,18 @@ namespace DragonBones
 			
 			return null;
 		}
+
+		public void dispose()
+		{
+			for (int i = 0; i < areaDataList.Count; ++i)
+			{
+				areaDataList[i].dispose();
+				//delete areaDataList[i];
+			}
+			
+			areaDataList.Clear();
+		}
+
 
 
 		}

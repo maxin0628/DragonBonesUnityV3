@@ -24,6 +24,18 @@ namespace DragonBones
 			scale = 1.0f;
 		}
 
+		public virtual void dispose()
+		{
+			for (int i = 0; i < frameList.Count;  ++i)
+			{
+				frameList[i].dispose();
+				//delete frameList[i];
+			}
+			
+			frameList.Clear();
+		}
+
+
 		}
 }
 

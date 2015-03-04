@@ -30,7 +30,7 @@ namespace DragonBones
 			return _dragonBonesDataMap;
 		}
 
-		public Dictionary<string, DragonBonesData> getTextureAtlasMap()
+		public Dictionary<string, ITextureAtlas> getTextureAtlasMap()
 		{
 			return _textureAtlasMap;
 		}
@@ -49,10 +49,9 @@ namespace DragonBones
 		{
 			return _dragonBonesDataMap[name];
 		}
-		else
-		{
-			return null;
-		}
+		
+		return null;
+		
 	}
 	
 	public void addDragonBonesData(DragonBonesData data, string name)
@@ -172,7 +171,7 @@ namespace DragonBones
 			}
 		}
 		
-		if (!armatureData)
+		if (armatureData==null)
 		{
 			AutoSearchType searchType = (dragonBonesName.Length<=0 ? AutoSearchType.AST_ALL : (autoSearchDragonBonesData ? AutoSearchType.AST_AUTO : AutoSearchType.AST_NONE));
 			
@@ -186,7 +185,7 @@ namespace DragonBones
 					{
 						armatureData = dragonBonesData.getArmatureData(armatureName);
 						
-						if (armatureData)
+						if (armatureData!=null)
 						{
 								_currentDragonBonesDataName = obj.Key;
 							_currentTextureAtlasName = _currentDragonBonesDataName;
@@ -197,7 +196,7 @@ namespace DragonBones
 			}
 		}
 		
-		if (!armatureData)
+		if (armatureData==null)
 		{
 			return null;
 		}
@@ -206,21 +205,21 @@ namespace DragonBones
 		{
 			animationArmatureData = dragonBonesData.getArmatureData(animationName);
 			
-			if (!animationArmatureData)
+			if (animationArmatureData==null)
 			{
 				foreach (KeyValuePair<string, DragonBonesData> iterator in _dragonBonesDataMap)
 				{
 					dragonBonesData = iterator.Value;
 					animationArmatureData = dragonBonesData.getArmatureData(animationName);
 					
-					if (animationArmatureData)
+					if (animationArmatureData!=null)
 					{
 						break;
 					}
 				}
 			}
 			
-			if (animationArmatureData)
+			if (animationArmatureData!=null)
 			{
 				skinDataCopy = animationArmatureData.getSkinData("");
 			}
@@ -230,7 +229,7 @@ namespace DragonBones
 		Armature armature = generateArmature(armatureData);
 		armature.name = armatureName;
 		
-		if (animationArmatureData)
+		if (animationArmatureData!=null)
 		{
 			armature.getAnimation().setAnimationDataList(animationArmatureData.animationDataList);
 		}
@@ -243,7 +242,7 @@ namespace DragonBones
 		buildBones(armature, armatureData);
 		
 		//
-		if (skinData)
+		if (skinData!=null)
 		{
 			buildSlots(armature, armatureData, skinData, skinDataCopy);
 		}
@@ -255,7 +254,7 @@ namespace DragonBones
 		return armature;
 	}
 	
-	public void getTextureDisplay(string textureName, string textureAtlasName, DisplayData displayData) 
+	public object getTextureDisplay(string textureName, string textureAtlasName, DisplayData displayData) 
 	{
 		ITextureAtlas textureAtlas = null;
 		TextureData textureData = null;
@@ -275,15 +274,15 @@ namespace DragonBones
 			
 			if (searchType != AutoSearchType.AST_NONE)
 			{
-				foreach (KeyValuePair<string, TextureData> iterator in _textureAtlasMap)
+				foreach (KeyValuePair<string, ITextureAtlas> iterator in _textureAtlasMap)
 				{
-						textureAtlas = iterator.Value;
+					textureAtlas = iterator.Value;
 					
 					if (searchType == AutoSearchType.AST_ALL || textureAtlas.textureAtlasData.autoSearch)
 					{
 						textureData = textureAtlas.textureAtlasData.getTextureData(textureName);
 						
-						if (textureData)
+						if (textureData!=null)
 						{
 							break;
 						}
@@ -302,7 +301,7 @@ namespace DragonBones
 			
 			if (_dragonBonesDataMap.ContainsKey(textureAtlas.textureAtlasData.name))
 			{
-				DragonBonesData *dragonBonesData = _dragonBonesDataMap[textureAtlas.textureAtlasData.name];
+				DragonBonesData dragonBonesData = _dragonBonesDataMap[textureAtlas.textureAtlasData.name];
 				
 				for (int i = 0; i < dragonBonesData.armatureDataList.Count;  ++i)
 				{
@@ -324,19 +323,19 @@ namespace DragonBones
 								}
 							}
 							
-							if (displayData)
+							if (displayData!=null)
 							{
 								break;
 							}
 						}
 						
-						if (displayData)
+						if (displayData!=null)
 						{
 							break;
 						}
 					}
 					
-					if (displayData)
+					if (displayData!=null)
 					{
 						break;
 					}
@@ -359,7 +358,7 @@ namespace DragonBones
 			// copy
 			bone.origin = boneData.transform;
 			
-			if (armatureData.getBoneData(boneData.parent))
+			if (armatureData.getBoneData(boneData.parent)!=null)
 			{
 				armature.addBone(bone, boneData.parent);
 			}
@@ -377,7 +376,7 @@ namespace DragonBones
 			SlotData slotData = skinData.slotDataList[i];
 			Bone bone = armature.getBone(slotData.parent);
 			
-			if (!bone)
+			if (bone==null)
 			{
 				continue;
 			}
@@ -386,7 +385,7 @@ namespace DragonBones
 			slot.name = slotData.name;
 			slot._originZOrder = slotData.zOrder;
 			slot._slotData = slotData;
-			List<std::pair<object, DisplayType>> displayList;
+			List<KeyValuePair<object, DragonBones.DisplayType>> displayList = new List<KeyValuePair<object, DragonBones.DisplayType>>();
 			object frameDisplay = null;
 			
 			for (int j = 0; j < slotData.displayDataList.Count; ++j)
@@ -399,31 +398,28 @@ namespace DragonBones
 				{
 					DisplayData displayDataCopy = null;
 					
-					if (skinDataCopy)
+					if (skinDataCopy!=null)
 					{
 						 SlotData slotDataCopy = skinDataCopy.getSlotData(slotData.name);
 						
-						if (slotDataCopy)
+						if (slotDataCopy!=null)
 						{
 							displayDataCopy = slotDataCopy.displayDataList[i];
 						}
 					}
 					string currentDragonBonesDataName = _currentDragonBonesDataName;
 					string currentTextureAtlasName = _currentTextureAtlasName;
-					Armature childArmature = buildArmature(displayData.name, "", displayDataCopy ? displayDataCopy.name : "", currentDragonBonesDataName, currentTextureAtlasName);
-						displayList.Add(new KeyValuePair<object, DisplayType>(childArmature, DragonBones.DisplayType.DT_ARMATURE));
+					Armature childArmature = buildArmature(displayData.name, "", (displayDataCopy!=null) ? displayDataCopy.name : "", currentDragonBonesDataName, currentTextureAtlasName);
+						displayList.Add(new KeyValuePair<object, DragonBones.DisplayType>(childArmature, DragonBones.DisplayType.DT_ARMATURE));
 					_currentDragonBonesDataName = currentDragonBonesDataName;
 					_currentTextureAtlasName = currentTextureAtlasName;
 					break;
 				}
 					
-					case DragonBones.DisplayType.DT_IMAGE:
-				{
-
-				}
-					default:
-						displayList.Add(new KeyValuePair<object, DisplayType>(null, DragonBones.DisplayType.DT_IMAGE));
-						break;
+				case DragonBones.DisplayType.DT_IMAGE:
+				default:
+						displayList.Add(new KeyValuePair<object, DragonBones.DisplayType>(null, DragonBones.DisplayType.DT_IMAGE));
+					break;
 				}
 			}
 				
@@ -440,17 +436,17 @@ namespace DragonBones
 
 
 			
-		protected Armature generateArmature( ArmatureData armatureData)
+		protected virtual Armature generateArmature( ArmatureData armatureData)
 		{
-
+			return null;
 		}
-		protected Slot generateSlot( SlotData slotData)
+		protected virtual Slot generateSlot( SlotData slotData)
 		{
-
+			return null;
 		}
-		protected void generateDisplay( ITextureAtlas textureAtlas,  TextureData textureData,  DisplayData displayData)
+		protected virtual object generateDisplay( ITextureAtlas textureAtlas,  TextureData textureData,  DisplayData displayData)
 		{
-
+			return null;
 		}
   }
 }

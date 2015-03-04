@@ -16,9 +16,9 @@ namespace DragonBones
 		public IAreaData.AreaType areaType;
 		public string name;
 
-		  public enum  AreaType {AT_ELLIPSE, AT_RECTANGLE};
+		public enum  AreaType {AT_ELLIPSE, AT_RECTANGLE};
 	
-		 
+		public void dispose(){}
 
 		}
 }

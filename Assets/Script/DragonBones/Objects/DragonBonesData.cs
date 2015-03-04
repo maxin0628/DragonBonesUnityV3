@@ -24,7 +24,7 @@ namespace DragonBones
 				{
 				}
 
-		ArmatureData getArmatureData(string armatureName) 
+		public ArmatureData getArmatureData(string armatureName) 
 		{
 			for (int i = 0; i < armatureDataList.Count; ++i)
 			{

@@ -67,11 +67,11 @@ namespace DragonBones
 					return boneDataList[i];
 				}
 			}
-			
+
 			return null;
 		}
 		
-		SkinData getSkinData(string skinName)
+		public SkinData getSkinData(string skinName)
 		{
 			if (skinDataList.Count<=0)
 			{
@@ -94,7 +94,7 @@ namespace DragonBones
 			return null;
 		}
 		
-		AnimationData getAnimationData(string animationName) 
+		public AnimationData getAnimationData(string animationName) 
 		{
 			for (int i = 0; i < animationDataList.Count;  ++i)
 			{
@@ -107,7 +107,7 @@ namespace DragonBones
 			return null;
 		}
 		
-		void sortBoneDataList()
+		public void sortBoneDataList()
 		{
 			if (boneDataList.Count!=0)
 			{
@@ -139,7 +139,7 @@ namespace DragonBones
 			}
 		}
 
-		void dispose()
+		public void dispose()
 		{
 			for (int i = 0; i < areaDataList.Count; ++i)
 			{
