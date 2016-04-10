@@ -16,7 +16,7 @@ namespace DragonBones
 
 	
 		public string name;
-		public List<SlotData> slotDataList;
+		public List<SlotData> slotDataList = new List<SlotData>();
 
 				public SkinData ()
 				{

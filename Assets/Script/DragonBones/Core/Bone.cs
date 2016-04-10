@@ -10,6 +10,7 @@
 using System;
 using System.Collections.Generic;
 using Com.Viperstudio.Geom;
+using Com.Viperstudio.Utils;
 
 namespace DragonBones
 {
@@ -25,19 +26,16 @@ namespace DragonBones
 			  return 1;
 		}
 		
+		public string displayController = "";
 		
-	
-		public string displayController;
-		
-	
 	    public bool _isColorChanged;
 	    public int _needUpdate;
 		
-		public Point _tweenPivot;
-		protected Transform _tween;
-		protected List<Bone> _boneList;
-		protected List<Slot> _slotList;
-		protected List<TimelineState> _timelineStateList;
+		public Point _tweenPivot = new Point();
+		protected DBTransform _tween = new DBTransform();
+		protected List<Bone> _boneList = new List<Bone>();
+		protected List<Slot> _slotList = new List<Slot>();
+		protected List<TimelineState> _timelineStateList = new List<TimelineState>();
 
 
 		public Bone ()
@@ -205,26 +203,30 @@ namespace DragonBones
 			}
 			
 			blendingTimeline();
-			global.ScaleX = (origin.ScaleX + _tween.ScaleX) * offset.ScaleX;
+
+            global.ScaleX = (origin.ScaleX + _tween.ScaleX) * offset.ScaleX;
 			global.ScaleY = (origin.ScaleY + _tween.ScaleY) * offset.ScaleY;
-			
-			if (_parent!=null)
+
+            if (_parent!=null)
 			{
-				float x = origin.X + offset.X + _tween.X;
-				float y = origin.Y + offset.Y + _tween.Y;
-			    Matrix parentMatrix = _parent.globalTransformMatrix;
-				globalTransformMatrix.Tx = global.X = parentMatrix.A * x + parentMatrix.C * y + parentMatrix.Tx;
-				globalTransformMatrix.Ty = global.Y = parentMatrix.D * y + parentMatrix.B * x + parentMatrix.Ty;
-				
-				if (inheritRotation)
+                float x = origin.X + offset.X + _tween.X;
+                float y = origin.Y + offset.Y + _tween.Y;
+			    Com.Viperstudio.Geom.Matrix parentMatrix = _parent.globalTransformMatrix;
+                globalTransformMatrix.Tx = global.X = parentMatrix.A * x + parentMatrix.C * y + parentMatrix.Tx;
+
+                globalTransformMatrix.Ty = global.Y = parentMatrix.D * y + parentMatrix.B * x +  parentMatrix.Ty;
+
+                if (inheritRotation)
 				{
-					global.SkewX = origin.SkewX + offset.SkewX + _tween.SkewX + _parent.global.SkewX;
-					global.SkewY = origin.SkewY + offset.SkewY + _tween.SkewY + _parent.global.SkewY;
+                    global.SkewX = origin.SkewX + offset.SkewX + _tween.SkewX + _parent.global.SkewX;
+                    global.SkewY = origin.SkewY + offset.SkewY + _tween.SkewY + _parent.global.SkewY;
 				}
 				else
 				{
-					global.SkewX = origin.SkewX + offset.SkewX + _tween.SkewX;
-					global.SkewY = origin.SkewY + offset.SkewY + _tween.SkewY;
+                    global.SkewX = origin.SkewX + offset.SkewX + _tween.SkewX;
+
+                    global.SkewY = origin.SkewY + offset.SkewY + _tween.SkewY;
+                   
 				}
 				
 				if (inheritScale)
@@ -232,7 +234,9 @@ namespace DragonBones
 					global.ScaleX *= _parent.global.ScaleX;
 					global.ScaleY *= _parent.global.ScaleY;
 				}
-			}
+                
+               // Logger.Log(_tween.X ); // + "  "+ _tween.Y   + "   " + _tween.SkewX +　"  " + _tween.SkewY);
+            }
 			else
 			{
 				globalTransformMatrix.Tx = global.X = origin.X + offset.X + _tween.X;
@@ -240,24 +244,21 @@ namespace DragonBones
 				global.SkewX = origin.SkewX + offset.SkewX + _tween.SkewX;
 				global.SkewY = origin.SkewY + offset.SkewY + _tween.SkewY;
 			}
-			
-			/*
-    globalTransformMatrix.a = global.scaleX * cos(global.skewY);
-    globalTransformMatrix.b = global.scaleX * sin(global.skewY);
-    globalTransformMatrix.c = -global.scaleY * sin(global.skewX);
-    globalTransformMatrix.d = global.scaleY * cos(global.skewX);
-    */
-			globalTransformMatrix.A = offset.ScaleX * (float)Math.Cos(global.SkewY);
+
+
+      
+            globalTransformMatrix.A = offset.ScaleX * (float)Math.Cos(global.SkewY);
 			globalTransformMatrix.B = offset.ScaleX * (float)Math.Sin(global.SkewY);
 			globalTransformMatrix.C = -offset.ScaleY * (float)Math.Sin(global.SkewX);
 			globalTransformMatrix.D = offset.ScaleY * (float)Math.Cos(global.SkewX);
+            
 		}
 
 		public virtual void updateColor(
-			int aOffset,
-			int rOffset,
-			int gOffset,
-			int bOffset,
+			float aOffset,
+            float rOffset,
+            float gOffset,
+            float bOffset,
 			float aMultiplier,
 			float rMultiplier,
 			float gMultiplier,
@@ -371,16 +372,18 @@ namespace DragonBones
 
 		protected virtual void blendingTimeline()
 		{
+            
 			int i = _timelineStateList.Count;
 			
 			if (i == 1)
 			{
 				TimelineState timelineState = _timelineStateList[0];
-				Transform transform = timelineState._transform;
+				DBTransform transform = timelineState._transform;
 				Point pivot = timelineState._pivot;
 				timelineState._weight = timelineState._animationState.getCurrentWeight();
 				float weight = timelineState._weight;
-				_tween.X = transform.X * weight;
+
+                _tween.X = transform.X * weight;
 				_tween.Y = transform.Y * weight;
 				_tween.SkewX = transform.SkewX * weight;
 				_tween.SkewY = transform.SkewY * weight;
@@ -388,6 +391,7 @@ namespace DragonBones
 				_tween.ScaleY = transform.ScaleY * weight;
 				_tweenPivot.X = pivot.X * weight;
 				_tweenPivot.Y = pivot.Y * weight;
+                
 			}
 			else if (i > 1)
 			{
@@ -429,7 +433,7 @@ namespace DragonBones
 					//timelineState
 					if (weight!=0 && timelineState._blendEnabled)
 					{
-						Transform transform = timelineState._transform;
+						DBTransform transform = timelineState._transform;
 						Point pivot = timelineState._pivot;
 						x += transform.X * weight;
 						y += transform.Y * weight;
@@ -451,21 +455,23 @@ namespace DragonBones
 				_tween.ScaleY = scaleY;
 				_tweenPivot.X = pivotX;
 				_tweenPivot.Y = pivotY;
+                
 			}
+            
 		}
 
 
 	 
-		protected	virtual void setArmature(Armature armature)
+		public	override void setArmature(Armature armature)
 		{
 			base.setArmature(armature);
 			
-			for (int i = 0; i <= _boneList.Count;  ++i)
+			for (int i = 0; i < _boneList.Count;  ++i)
 			{
 				_boneList[i].setArmature(armature);
 			}
 			
-			for (int i = 0; i <= _slotList.Count; ++i)
+			for (int i = 0; i < _slotList.Count; ++i)
 			{
 				_slotList[i].setArmature(armature);
 			}

@@ -10,6 +10,7 @@
 using System;
 using System.Collections.Generic;
 using Com.Viperstudio.Geom;
+using Com.Viperstudio.Utils;
 namespace DragonBones
 {
 		public class Slot :DBObject
@@ -22,7 +23,7 @@ namespace DragonBones
 		public float _tweenZOrder;
 		public float _offsetZOrder;
 		protected DragonBones.BlendMode _blendMode;
-		protected ColorTransform _colorTransform;
+		protected ColorTransform _colorTransform = new ColorTransform();
 
 		// <displayOrArmature*, DisplayType>
 		protected List<KeyValuePair<object, DragonBones.DisplayType>> _displayList;
@@ -118,6 +119,7 @@ namespace DragonBones
 
 		public void setDisplayList(List<KeyValuePair<object, DragonBones.DisplayType>> displayList, bool disposeExisting)
 		{
+            
 			if (_displayIndex < 0)
 			{
 				_isShowDisplay = true;
@@ -136,6 +138,7 @@ namespace DragonBones
 			int displayIndexBackup = _displayIndex;
 			_displayIndex = -1;
 			changeDisplay(displayIndexBackup);
+            
 		}
 		
 		public void setVisible(bool visible)
@@ -147,7 +150,7 @@ namespace DragonBones
 			}
 		}
 		
-		public void setArmature(Armature armature)
+		public override void setArmature(Armature armature)
 		{
 			base.setArmature(armature);
 			
@@ -165,19 +168,23 @@ namespace DragonBones
 
 		public void update()
 		{
+            
 			if (_parent._needUpdate <= 0)
 			{
 				return;
 			}
-			
-			float x = origin.X + offset.X + _parent._tweenPivot.X;
-			float y = origin.Y + offset.Y + _parent._tweenPivot.Y;
-			Matrix parentMatrix = _parent.globalTransformMatrix;
-			//globalTransformMatrix.tx = global.x = parentMatrix.a * x + parentMatrix.c * y + parentMatrix.tx;
-			//globalTransformMatrix.ty = global.y = parentMatrix.d * y + parentMatrix.b * x + parentMatrix.ty;
-			globalTransformMatrix.Tx = global.X = parentMatrix.A * x * _parent.global.ScaleX + parentMatrix.C * y * _parent.global.ScaleY + parentMatrix.Tx;
-			globalTransformMatrix.Ty = global.Y = parentMatrix.D * y * _parent.global.ScaleY + parentMatrix.B * x * _parent.global.ScaleX + parentMatrix.Ty;
-			
+
+            //Logger.Log(name  + " " + _parent.origin.X + " " + origin.X );
+
+            float x = origin.X + offset.X + _parent._tweenPivot.X;
+            float y = origin.Y + offset.Y + _parent._tweenPivot.Y;
+			Com.Viperstudio.Geom.Matrix parentMatrix = _parent.globalTransformMatrix;
+
+            globalTransformMatrix.Tx = global.X = parentMatrix.A * x + parentMatrix.C * y  + parentMatrix.Tx;
+            globalTransformMatrix.Ty = global.Y = parentMatrix.D * y + parentMatrix.B * x  + parentMatrix.Ty;
+            //globalTransformMatrix.Tx = global.X = parentMatrix.A * x * _parent.global.ScaleX + parentMatrix.C * y * _parent.global.ScaleY + parentMatrix.Tx;
+            //globalTransformMatrix.Ty = global.Y = parentMatrix.D * y * _parent.global.ScaleY + parentMatrix.B * x * _parent.global.ScaleX + parentMatrix.Ty;
+			   
 			if (inheritRotation)
 			{
 				global.SkewX = origin.SkewX + offset.SkewX + _parent.global.SkewX;
@@ -204,6 +211,7 @@ namespace DragonBones
 			globalTransformMatrix.B = global.ScaleX * (float)Math.Sin(global.SkewY);
 			globalTransformMatrix.C = -global.ScaleY * (float)Math.Sin(global.SkewX);
 			globalTransformMatrix.D = global.ScaleY * (float)Math.Cos(global.SkewX);
+            
 			updateDisplayTransform();
 		}
 
@@ -373,19 +381,22 @@ namespace DragonBones
 				}
 				else if (_slotData!=null)
 				{
-					updateDisplayBlendMode(_slotData.blendMode);
+				    updateDisplayBlendMode(_slotData.blendMode);
 				}
 				
 				updateDisplayColor(
 					_colorTransform.AlphaOffset, _colorTransform.RedOffset, _colorTransform.GreenOffset, _colorTransform.BlueOffset,
 					_colorTransform.AlphaMultiplier, _colorTransform.RedMultiplier, _colorTransform.GreenMultiplier, _colorTransform.BlueMultiplier
 					);
+                    
 				updateDisplayVisible(_visible);
 				updateDisplayTransform();
+                
 			}
+            
 		}
 
-		public void updateDisplayColor(int aOffset, int rOffset, int gOffset, int bOffset, float aMultiplier, float rMultiplier, float gMultiplier, float bMultiplier)
+		public void updateDisplayColor(float aOffset, float rOffset, float gOffset, float bOffset, float aMultiplier, float rMultiplier, float gMultiplier, float bMultiplier)
 		{
 			_colorTransform.AlphaOffset = aOffset;
 			_colorTransform.RedOffset = rOffset;
@@ -420,8 +431,8 @@ namespace DragonBones
 		}
 		public virtual void updateDisplay(Object display)
 		{
-
-		}
+           
+        }
 		protected virtual void updateDisplayBlendMode(DragonBones.BlendMode blendMode)
 		{
 
@@ -432,8 +443,10 @@ namespace DragonBones
 		}
 		protected virtual void updateDisplayTransform()
 		{
-
-		}
+     
+            ((UnityBoneDisplay)_display).Update(this.globalTransformMatrix);
+            
+        }
 
 		public void dispose()
 		{

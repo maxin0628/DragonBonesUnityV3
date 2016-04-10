@@ -12,10 +12,10 @@ namespace Com.Viperstudio.Geom
 {
 		public class ColorTransform
 		{
-			public int AlphaOffset = 0;
-			public int RedOffset = 0;
-			public int GreenOffset = 0;
-			public int BlueOffset = 0;
+			public float AlphaOffset = 0f;
+			public float RedOffset = 0f;
+			public float GreenOffset = 0f;
+			public float BlueOffset = 0f;
 
 			public float AlphaMultiplier = 0f;
 			public float RedMultiplier = 0f;

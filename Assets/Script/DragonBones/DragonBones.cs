@@ -24,8 +24,8 @@ namespace DragonBones
 		
 		public static  float formatRadian(float radian)
 		{
-
-			radian = radian % (PI * 2.0f);
+            
+			radian =  radian % (PI * 2.0f);
 			
 			if (radian > PI)
 			{

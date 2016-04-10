@@ -10,11 +10,22 @@
 using System;
 namespace Com.Viperstudio.Geom
 {
-		public class Rectangle
+
+ 
+
+    public class Rectangle
 		{
-				public Rectangle ()
-				{
-				}
+
+        public float x;
+        public float y;
+        public float width;
+        public float height;
+
+
+        public Rectangle ()
+			{
+              
+			}
 		}
 }
 

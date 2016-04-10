@@ -17,7 +17,7 @@ namespace DragonBones
 	
 		public int duration;
 		public float scale;
-		public List<Frame> frameList;
+		public List<Frame> frameList = new List<Frame>();
 	    public Timeline ()
 		{
 			duration = 0;

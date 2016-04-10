@@ -15,7 +15,7 @@ namespace DragonBones
 	{
 
 	
-		public	static WorldClock clock;
+		public	static WorldClock clock = new WorldClock(-1, 1);
 		
 	
 		private 	bool _dirty;
@@ -25,7 +25,7 @@ namespace DragonBones
 		
 		
 		
-		private  List<IAnimatable> _animatableList;
+		private  List<IAnimatable> _animatableList = new List<IAnimatable>();
 
 		public WorldClock (float time, float timeScale)
 		{

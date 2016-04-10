@@ -19,7 +19,7 @@ namespace DragonBones
 	
 		public bool autoSearch;
 		public string name;
-		public List<ArmatureData> armatureDataList;
+		public List<ArmatureData> armatureDataList = new List<ArmatureData>();
 				public DragonBonesData ()
 				{
 				}

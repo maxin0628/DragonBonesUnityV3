@@ -10,17 +10,39 @@
 using System;
 using System.Collections.Generic;
 using Com.Viperstudio.Geom;
+using Com.Viperstudio.Utils;
 namespace DragonBones
 {
 		public class TimelineState
 		{
 
-	
-		private enum  UpdateState {UPDATE, UPDATE_ONCE, UNUPDATE};
+        private const float HALF_PI = (float)Math.PI * 0.5f;
+        private enum  UpdateState {UPDATE, UPDATE_ONCE, UNUPDATE};
 		
-		private  static List<TimelineState> _pool;
+		private  static List<TimelineState> _pool = new List<TimelineState>();
 
-		public static TimelineState borrowObject()
+        public static float GetEaseValue(float value, float easing)
+        {
+            float valueEase = float.NaN;
+            if (easing > 1)
+            {
+                valueEase = (float)(0.5 * (1 - Math.Cos(value * Math.PI)) - value);
+                easing -= 1;
+            }
+            else if (easing > 0)
+            {
+                valueEase = (float)Math.Sin(value * HALF_PI) - value;
+            }
+            else if (easing < 0)
+            {
+                valueEase = 1 - (float)Math.Cos(value * HALF_PI) - value;
+                easing *= -1;
+            }
+            return valueEase * easing + value;
+        }
+
+
+        public static TimelineState borrowObject()
 		{
 			if (_pool.Count<=0)
 			{
@@ -67,16 +89,16 @@ namespace DragonBones
 		private int _currentFramePosition;
 		private int _currentFrameDuration;
 		private int _totalTime;
-		public float _weight;
+		public float _weight = 0;
 		private float _tweenEasing;
 		
 		private UpdateState _updateState;
-		public Transform _transform;
-		private Transform _durationTransform;
-		private Transform _originTransform;
-		public Point _pivot;
-		private Point _durationPivot;
-		private Point _originPivot;
+		public DBTransform _transform = new DBTransform();
+		private DBTransform _durationTransform = new DBTransform();
+		private DBTransform _originTransform = new DBTransform();
+		public Point _pivot = new Point();
+		private Point _durationPivot = new Point();
+		private Point _originPivot = new Point();
 		private ColorTransform _durationColor;
 		
 		private Bone _bone;
@@ -88,9 +110,8 @@ namespace DragonBones
 		{
 		}
 
-	
-		
-		public void fadeIn(Bone bone, AnimationState animationState, TransformTimeline timeline)
+        
+        public void fadeIn(Bone bone, AnimationState animationState, TransformTimeline timeline)
 		{
 			_bone = bone;
 			_animationState = animationState;
@@ -123,9 +144,9 @@ namespace DragonBones
 			_durationPivot.X = 0.0f;
 			_durationPivot.Y = 0.0f;
 			// copy
-			_originTransform = _timeline.originTransform;
+			_originTransform.Copy(_timeline.originTransform);
 			// copy
-			_originPivot = _timeline.originPivot;
+			_originPivot.Copy (_timeline.originPivot);
 			
 			switch (_timeline.frameList.Count)
 			{
@@ -168,6 +189,7 @@ namespace DragonBones
 		{
 			progress /= _timeline.scale;
 			progress += _timeline.offset;
+            //Logger.Log(progress);
 			int currentTime = (int)(_totalTime * progress);
 			int currentPlayTimes = 0;
 			int playTimes = _animationState.getPlayTimes();
@@ -227,7 +249,8 @@ namespace DragonBones
 			if (_currentTime != currentTime)
 			{
 				_currentTime = currentTime;
-				TransformFrame prevFrame = null;
+
+ 				TransformFrame prevFrame = null;
 				TransformFrame currentFrame = null;
 				
 				for (int i = 0; i < _timeline.frameList.Count; ++i)
@@ -240,7 +263,7 @@ namespace DragonBones
 					{
 						++_currentFrameIndex;
 						
-						if (_currentFrameIndex >= (int)(i))
+						if (_currentFrameIndex >= (int)(_timeline.frameList.Count))
 						{
 							if (_isComplete)
 							{
@@ -257,8 +280,10 @@ namespace DragonBones
 					{
 						break;
 					}
-					
-					currentFrame = (TransformFrame)(_timeline.frameList[_currentFrameIndex]);
+
+                  
+
+                    currentFrame = (TransformFrame)(_timeline.frameList[_currentFrameIndex]);
 					
 					if (prevFrame!=null)
 					{
@@ -268,6 +293,8 @@ namespace DragonBones
 					
 					_currentFrameDuration = currentFrame.duration;
 					_currentFramePosition = currentFrame.position;
+
+                   
 					prevFrame = currentFrame;
 				}
 				
@@ -279,6 +306,7 @@ namespace DragonBones
 					if (_blendEnabled)
 					{
 						updateToNextFrame(currentPlayTimes);
+                        
 					}
 					else
 					{
@@ -548,8 +576,8 @@ namespace DragonBones
 		public void updateTween()
 		{
 			float progress = (_currentTime - _currentFramePosition) / (float)(_currentFrameDuration);
-			
-			if (_tweenEasing!=0 && _tweenEasing != DragonBones.NO_TWEEN_EASING)
+                   
+            if (_tweenEasing!=0 && _tweenEasing != DragonBones.NO_TWEEN_EASING)
 			{
 				progress = DragonBones.getEaseValue(progress, _tweenEasing);
 			}
@@ -558,7 +586,7 @@ namespace DragonBones
 
 			if (_tweenTransform)
 			{
-				Transform currentTransform = currentFrame.transform;
+				DBTransform currentTransform = currentFrame.transform;
 				Point currentPivot = currentFrame.pivot;
 				
 				if (_animationState.additiveBlending)
@@ -586,7 +614,10 @@ namespace DragonBones
 					_transform.SkewX = _originTransform.SkewX + currentTransform.SkewX + _durationTransform.SkewX * progress;
 					_transform.SkewY = _originTransform.SkewY + currentTransform.SkewY + _durationTransform.SkewY * progress;
 
-					if (_tweenScale)
+                    //if(_timeline.name == "man-weapon")
+                    //  Logger.Log(currentTransform.SkewX + " " + _durationTransform.SkewX + "  " + progress);
+
+                    if (_tweenScale)
 					{
 						_transform.ScaleX = _originTransform.ScaleX + currentTransform.ScaleX + _durationTransform.ScaleX * progress;
 						_transform.ScaleY = _originTransform.ScaleY + currentTransform.ScaleY + _durationTransform.ScaleY * progress;
@@ -630,10 +661,12 @@ namespace DragonBones
 						);
 				}
 			}
-		}
 
 
-		public void updateSingleFrame()
+        }
+
+
+        public void updateSingleFrame()
 		{
 			TransformFrame currentFrame = (TransformFrame)_timeline.frameList[0];
 			_bone.arriveAtFrame(currentFrame, this, _animationState, false);
@@ -664,9 +697,9 @@ namespace DragonBones
 					// normal blending
 					// timeline.originTransform + singleFrame.transform (0)
 					// copy
-					_transform = _originTransform;
+					_transform.Copy( _originTransform);
 					// copy
-					_pivot = _originPivot;
+					_pivot.Copy( _originPivot);
 				}
 
 				_bone.invalidUpdate();

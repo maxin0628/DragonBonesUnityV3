@@ -26,9 +26,9 @@ namespace DragonBones
 		protected bool _isPlaying;
 		public float _timeScale;
 
-		protected List<string> _animationList;
-		protected List<AnimationData> _animationDataList;
-		protected List<AnimationState> _animationStateList;
+		protected List<string> _animationList = new List<string>();
+		protected List<AnimationData> _animationDataList = new List<AnimationData>();
+		protected List<AnimationState> _animationStateList = new List<AnimationState>();
 		
 		public Armature _armature;
 		public AnimationState _lastAnimationState;
@@ -189,13 +189,11 @@ namespace DragonBones
 				for (int i = 0; i < _animationStateList.Count;  ++i)
 				{
 					AnimationState animationState = _animationStateList[i];
-					
 					if (animationState._group == group)
 					{
 						animationState.fadeOut(fadeInTime, pauseFadeOut);
 					}
 				}
-				
 				break;
 				
 			case AnimationFadeOutMode.ALL:
@@ -203,8 +201,7 @@ namespace DragonBones
 				{
 					AnimationState animationState = _animationStateList[i];
 					animationState.fadeOut(fadeInTime, pauseFadeOut);
-				}
-				
+				}	
 				break;
 
 			case AnimationFadeOutMode.SAME_LAYER_AND_GROUP:

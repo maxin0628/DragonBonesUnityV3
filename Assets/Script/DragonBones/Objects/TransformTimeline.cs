@@ -13,13 +13,13 @@ namespace DragonBones
 {
 		public class TransformTimeline: Timeline
 		{
-	
-		public bool transformed;
+        public static TransformTimeline HIDE_TIMELINE = new TransformTimeline();
+        public bool transformed;
 		public float offset;
 
 		public string name;
-		public Transform originTransform;
-		public Point originPivot;
+		public DBTransform originTransform = new DBTransform();
+		public Point originPivot = new Point();
 
 		public TransformTimeline ()
 		{

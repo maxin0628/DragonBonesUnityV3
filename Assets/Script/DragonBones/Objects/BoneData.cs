@@ -10,6 +10,7 @@
 using System;
 using System.Collections.Generic;
 using Com.Viperstudio.Geom;
+using DragonBones;
 namespace DragonBones
 {
 		public class BoneData
@@ -22,9 +23,9 @@ namespace DragonBones
 		
 		public string name;
 		public string parent;
-		public Transform global;
-		public Transform transform;
-		public List<IAreaData> areaDataList;
+		public DBTransform global = new DBTransform();
+		public DBTransform transform = new DBTransform();
+		public List<IAreaData> areaDataList = new List<IAreaData>();
 		
 
 

@@ -19,7 +19,7 @@ namespace DragonBones
 		public string name;
 		public string imagePath;
 		
-		public List<TextureData> textureDataList;
+		public List<TextureData> textureDataList = new List<TextureData>();
 
 		public TextureAtlasData ()
 		{

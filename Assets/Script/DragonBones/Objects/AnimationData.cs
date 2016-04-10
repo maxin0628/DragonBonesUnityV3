@@ -15,8 +15,8 @@ namespace DragonBones
 		public	float tweenEasing;
 		
 		public string name;
-		public List<TransformTimeline> timelineList;
-		public List<string> hideTimelineList;
+		public List<TransformTimeline> timelineList = new List<TransformTimeline>();
+		public List<string> hideTimelineList = new List<string>();
 
 		public TransformTimeline getTimeline(string timelineName)
 		{
@@ -32,7 +32,17 @@ namespace DragonBones
 
 		}
 
-		public virtual void dispose()
+        public void AddTimeline(TransformTimeline timeline, string timelineName)
+        {
+            if (timeline == null)
+            {
+                throw new System.Exception();
+            }
+            timeline.name = timelineName;
+            timelineList.Add(timeline);
+        }
+
+        public virtual void dispose()
 		{
 			base.dispose();
 			_dispose();
@@ -49,9 +59,6 @@ namespace DragonBones
 			timelineList.Clear();
 			hideTimelineList.Clear();
 		}
-
-
-
 
 	}
 

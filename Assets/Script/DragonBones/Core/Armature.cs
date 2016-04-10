@@ -34,9 +34,9 @@ namespace DragonBones
 		protected bool _delayDispose;
 		protected bool _lockDispose;
 		
-		protected List<Bone> _boneList;
-		protected List<Slot> _slotList;
-		public List<EventData> _eventDataList;
+		protected List<Bone> _boneList = new List<Bone>();
+		protected List<Slot> _slotList = new List<Slot>();
+		public List<EventData> _eventDataList = new List<EventData>();
 		
 		protected ArmatureData _armatureData;
 		public Animation _animation;
@@ -67,11 +67,11 @@ namespace DragonBones
 		private	static int sortBone(KeyValuePair<int, Bone> a, KeyValuePair<int, Bone> b)
 		{
 			if (a.Key < b.Key)
-						return -1;
+						return 1;
 			else if (a.Key == b.Key)
 						return 0;
 			else if (a.Key > b.Key)
-						return 1;
+						return -1;
 
 			return 0;
 
@@ -359,12 +359,12 @@ namespace DragonBones
 				passedTime *= _animation._timeScale;
 			    bool isFading = _animation._isFading;
 				
-				for (int i = _boneList.Count; i>=0; i--)
+				for (int i =_boneList.Count-1; i>=0; --i)
 				{
 					_boneList[i].update(isFading);
 				}
 				
-				for (int i = _slotList.Count; i>=0; i--)
+				for (int i = _slotList.Count-1; i>=0; --i)
 				{
 					Slot slot = _slotList[i];
 					slot.update();
@@ -374,8 +374,10 @@ namespace DragonBones
 						slot._childArmature.advanceTime(passedTime);
 					}
 				}
-				
-				if (_slotsZOrderChanged)
+
+                (_display as UnityArmatureDisplay).UpdateDisplay(_slotList);
+
+            if (_slotsZOrderChanged)
 				{
 					sortSlotsByZOrder();
 					

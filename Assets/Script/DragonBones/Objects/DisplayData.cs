@@ -17,8 +17,8 @@ namespace DragonBones
 
 		public string name;
 		public DragonBones.DisplayType type;
-		public Transform transform;
-		public Point pivot;
+		public DBTransform transform = new DBTransform();
+		public Point pivot = new Point();
 
 		public DisplayData ()
 		{

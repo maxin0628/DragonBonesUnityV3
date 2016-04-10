@@ -22,11 +22,11 @@ namespace DragonBones
 		// NaN:no tween, 10:auto tween, [-1, 0):ease in, 0:line easing, (0, 1]:ease out, (1, 2]:ease in out
 		public float tweenEasing;
 
-		public Transform global;
-		public Transform transform;
-		public Point pivot;
-		public Point scaleOffset;
-		public ColorTransform color;
+		public DBTransform global = new DBTransform();
+		public DBTransform transform = new DBTransform();
+		public Point pivot = new Point();
+		public Point scaleOffset = new Point();
+		public ColorTransform color = new ColorTransform();
 
 
 		public TransformFrame ()

@@ -20,7 +20,7 @@ namespace DragonBones
 		public string name;
 		public string parent;
 		public DragonBones.BlendMode blendMode;
-		public List<DisplayData> displayDataList;
+		public List<DisplayData> displayDataList = new List<DisplayData>();
 		public SlotData ()
 		{
 			zOrder = 0.0f;

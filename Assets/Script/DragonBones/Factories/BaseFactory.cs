@@ -9,6 +9,7 @@
 // ------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using Com.Viperstudio.Utils;
 namespace DragonBones
 {
 	
@@ -22,8 +23,8 @@ namespace DragonBones
 		
 	    protected string _currentDragonBonesDataName;
 		protected string _currentTextureAtlasName;
-		protected Dictionary<string, DragonBonesData> _dragonBonesDataMap;
-		protected Dictionary<string, ITextureAtlas> _textureAtlasMap;
+		protected Dictionary<string, DragonBonesData> _dragonBonesDataMap = new Dictionary<string, DragonBonesData>();
+		protected Dictionary<string, ITextureAtlas> _textureAtlasMap = new Dictionary<string, ITextureAtlas>();
 
 		public Dictionary<string, DragonBonesData> getDragonBonesDataMap()
 		{
@@ -45,7 +46,7 @@ namespace DragonBones
 	public DragonBonesData getDragonBonesData(string name) 
 	{
 
-		if (_dragonBonesDataMap.ContainsKey(name));
+		if (_dragonBonesDataMap.ContainsKey(name))
 		{
 			return _dragonBonesDataMap[name];
 		}
@@ -356,9 +357,9 @@ namespace DragonBones
 			bone.inheritRotation = boneData.inheritRotation;
 			bone.inheritScale = boneData.inheritScale;
 			// copy
-			bone.origin = boneData.transform;
-			
-			if (armatureData.getBoneData(boneData.parent)!=null)
+			bone.origin.Copy( boneData.transform);
+           
+            if (armatureData.getBoneData(boneData.parent)!=null)
 			{
 				armature.addBone(bone, boneData.parent);
 			}
@@ -418,7 +419,9 @@ namespace DragonBones
 					
 				case DragonBones.DisplayType.DT_IMAGE:
 				default:
-						displayList.Add(new KeyValuePair<object, DragonBones.DisplayType>(null, DragonBones.DisplayType.DT_IMAGE));
+                            ITextureAtlas textureAtlas = _textureAtlasMap[_currentTextureAtlasName];
+                            TextureData textureData = textureAtlas.textureAtlasData.getTextureData(displayData.name);
+                            displayList.Add(new KeyValuePair<object, DragonBones.DisplayType>(generateDisplay(textureAtlas, textureData, displayData), DragonBones.DisplayType.DT_IMAGE));
 					break;
 				}
 			}

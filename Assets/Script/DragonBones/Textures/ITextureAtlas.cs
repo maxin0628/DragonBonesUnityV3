@@ -6,7 +6,7 @@ namespace DragonBones
 
 public class ITextureAtlas  {
 
-		public TextureAtlasData textureAtlasData;
+		public TextureAtlasData textureAtlasData = new TextureAtlasData();
 
 		public virtual void dispose(){}
 }

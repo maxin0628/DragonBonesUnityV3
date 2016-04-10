@@ -17,7 +17,7 @@ namespace DragonBones
 	
 		public enum  FadeState {FADE_BEFORE, FADING, FADE_COMPLETE};
 		
-		private static List<AnimationState> _pool;
+		private static List<AnimationState> _pool = new List<AnimationState>();
 		public static AnimationState borrowObject()
 		{
 			if (_pool.Count<=0)
@@ -83,8 +83,8 @@ namespace DragonBones
 		public string _group;
 		public  FadeState _fadeState;
 		
-		private List<TimelineState> _timelineStateList;
-		private List<string> _mixingTransforms;
+		private List<TimelineState> _timelineStateList = new List<TimelineState>();
+		private List<string> _mixingTransforms = new List<string>();
 		
 		private AnimationData _clip;
 		private Armature _armature;
@@ -417,7 +417,7 @@ namespace DragonBones
 
 		public void updateTimelineStates()
 		{
-			for (int i = _timelineStateList.Count; i>=0; i--)
+			for (int i = _timelineStateList.Count; i>0; i--)
 			{
 				TimelineState timelineState = _timelineStateList[i];
 				
@@ -436,7 +436,7 @@ namespace DragonBones
 			}
 			else
 			{
-				for (int i = _timelineStateList.Count; i>=0; i--)
+				for (int i = _timelineStateList.Count; i>0; i--)
 				{
 					TimelineState timelineState = _timelineStateList[i];
 
@@ -642,6 +642,7 @@ namespace DragonBones
 				}
 				
 				currentPlayTimes = (int)(Math.Ceiling(currentTime / (float)(_totalTime)));
+                
 				currentTime -= (int)(Math.Floor(currentTime / (float)(_totalTime))) * _totalTime;
 				
 				if (isThisComplete)
@@ -658,6 +659,7 @@ namespace DragonBones
 			// update timeline
 			_isComplete = isThisComplete;
 			float progress = _time * 1000.0f / (float)(_totalTime);
+            
 			
 			for (int i = 0; i < _timelineStateList.Count;  ++i)
 			{
@@ -802,7 +804,7 @@ namespace DragonBones
 		public void clear()
 		{
 			// reverse delete
-			for (int i = _timelineStateList.Count; i>=0; i--)
+			for (int i = _timelineStateList.Count-1; i>=0; i--)
 			{
 				TimelineState.returnObject(_timelineStateList[i]);
 			}

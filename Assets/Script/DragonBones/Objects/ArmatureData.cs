@@ -15,10 +15,10 @@ namespace DragonBones
 		{
 	
 	      public string name;
-		  public List<IAreaData> areaDataList;
-		  public List<BoneData> boneDataList;
-		  public List<SkinData> skinDataList;
-		  public List<AnimationData> animationDataList;
+		  public List<IAreaData> areaDataList = new List<IAreaData>();
+		  public List<BoneData> boneDataList = new List<BoneData>();
+		  public List<SkinData> skinDataList = new List<SkinData>();
+		  public List<AnimationData> animationDataList = new List<AnimationData>();
 
 
 		 //TODO check
@@ -109,7 +109,7 @@ namespace DragonBones
 		
 		public void sortBoneDataList()
 		{
-			if (boneDataList.Count!=0)
+			if (boneDataList.Count==0)
 			{
 				return;
 			}

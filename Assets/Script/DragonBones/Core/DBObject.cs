@@ -19,10 +19,10 @@ namespace DragonBones
 		public bool inheritScale;
 		
 		public string name;
-		public Transform global;
-		public Transform origin;
-		public Transform offset;
-		public Matrix globalTransformMatrix;
+		public DBTransform global = new DBTransform();
+		public DBTransform origin = new DBTransform();
+		public DBTransform offset = new DBTransform();
+		public Matrix globalTransformMatrix = new Matrix();
 		
 		public object userData;
 		

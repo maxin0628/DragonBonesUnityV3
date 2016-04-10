@@ -17,9 +17,9 @@ namespace DragonBones
 		 public int duration;
 		
 		public FrameType frameType;
-		public string action;
-		public string evt;
-		public string sound;
+		public string action = "";
+		public string evt = "";
+		public string sound = "";
 		public string eventParameters;
 		
 		public Object eventParametersParsed;

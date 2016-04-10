@@ -18,8 +18,8 @@ namespace DragonBones
 
 		
 		public string name;
-		public Rectangle region;	
-		public Rectangle frame;
+		public Rectangle region = new Rectangle();	
+		public Rectangle frame = new Rectangle();
 		
 		public TextureData ()
 		{
