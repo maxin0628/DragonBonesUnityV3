@@ -9,7 +9,7 @@
 // ------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-
+using Com.Viperstudio.Utils;
 using Com.Viperstudio.Geom;
 
 namespace DragonBones
@@ -27,6 +27,7 @@ namespace DragonBones
 			BoneData parentBoneData;
 			while(i -- >0)
 			{
+                
 				boneData = boneDataList[i];
 				if(boneData.parent!=null)
 				{
@@ -76,6 +77,7 @@ namespace DragonBones
 			
 			while(i -- >0)
 			{
+								
 				boneData = boneDataList[i];
 				timeline = animationData.getTimeline(boneData.name);
 				if(timeline == null)

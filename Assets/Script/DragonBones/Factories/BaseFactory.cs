@@ -354,8 +354,8 @@ namespace DragonBones
 		    BoneData boneData = armatureData.boneDataList[i];
 			Bone bone = new Bone();
 			bone.name = boneData.name;
-			bone.inheritRotation = boneData.inheritRotation;
-			bone.inheritScale = boneData.inheritScale;
+			bone.inheritRotation = true;//boneData.inheritRotation;
+			bone.inheritScale = true;//boneData.inheritScale;
 			// copy
 			bone.origin.Copy( boneData.transform);
            

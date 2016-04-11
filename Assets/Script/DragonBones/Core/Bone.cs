@@ -212,6 +212,7 @@ namespace DragonBones
                 float x = origin.X + offset.X + _tween.X;
                 float y = origin.Y + offset.Y + _tween.Y;
 			    Com.Viperstudio.Geom.Matrix parentMatrix = _parent.globalTransformMatrix;
+
                 globalTransformMatrix.Tx = global.X = parentMatrix.A * x + parentMatrix.C * y + parentMatrix.Tx;
 
                 globalTransformMatrix.Ty = global.Y = parentMatrix.D * y + parentMatrix.B * x +  parentMatrix.Ty;

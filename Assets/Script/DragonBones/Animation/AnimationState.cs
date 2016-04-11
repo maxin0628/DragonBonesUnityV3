@@ -749,7 +749,7 @@ namespace DragonBones
 					{
 						++_currentFrameIndex;
 						
-						if (_currentFrameIndex >= (int)(i))
+						if (_currentFrameIndex >=  _clip.frameList.Count)
 						{
 							if (isThisComplete)
 							{

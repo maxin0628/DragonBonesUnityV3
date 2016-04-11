@@ -180,10 +180,10 @@ namespace DragonBones
             float y = origin.Y + offset.Y + _parent._tweenPivot.Y;
 			Com.Viperstudio.Geom.Matrix parentMatrix = _parent.globalTransformMatrix;
 
-            globalTransformMatrix.Tx = global.X = parentMatrix.A * x + parentMatrix.C * y  + parentMatrix.Tx;
-            globalTransformMatrix.Ty = global.Y = parentMatrix.D * y + parentMatrix.B * x  + parentMatrix.Ty;
-            //globalTransformMatrix.Tx = global.X = parentMatrix.A * x * _parent.global.ScaleX + parentMatrix.C * y * _parent.global.ScaleY + parentMatrix.Tx;
-            //globalTransformMatrix.Ty = global.Y = parentMatrix.D * y * _parent.global.ScaleY + parentMatrix.B * x * _parent.global.ScaleX + parentMatrix.Ty;
+            //globalTransformMatrix.Tx = global.X = parentMatrix.A * x + parentMatrix.C * y  + parentMatrix.Tx;
+            //globalTransformMatrix.Ty = global.Y = parentMatrix.D * y + parentMatrix.B * x  + parentMatrix.Ty;
+            globalTransformMatrix.Tx = global.X = parentMatrix.A * x * _parent.global.ScaleX + parentMatrix.C * y * _parent.global.ScaleY + parentMatrix.Tx;
+            globalTransformMatrix.Ty = global.Y = parentMatrix.D * y * _parent.global.ScaleY + parentMatrix.B * x * _parent.global.ScaleX + parentMatrix.Ty;
 			   
 			if (inheritRotation)
 			{
