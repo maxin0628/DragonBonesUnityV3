@@ -235,8 +235,8 @@ namespace DragonBones
 					global.ScaleX *= _parent.global.ScaleX;
 					global.ScaleY *= _parent.global.ScaleY;
 				}
-                
-               // Logger.Log(_tween.X ); // + "  "+ _tween.Y   + "   " + _tween.SkewX +　"  " + _tween.SkewY);
+								if(name == "head")
+                Logger.Log(_tween.X  + "  " + _tween.Y   + "   " + _tween.SkewX+ "  " + _tween.SkewY);
             }
 			else
 			{
