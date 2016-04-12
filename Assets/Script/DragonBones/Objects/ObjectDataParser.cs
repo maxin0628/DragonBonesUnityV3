@@ -41,7 +41,7 @@ namespace DragonBones
             */
 			
 			uint frameRate =  uint.Parse(rawData[ConstValues.A_FRAME_RATE].ToString());
-
+            //frameRate = 60;
             DragonBonesData data = new DragonBonesData();
 			data.name = rawData[ConstValues.A_NAME] as String;
 
@@ -93,7 +93,7 @@ namespace DragonBones
 				boneData.length = boneObject [ConstValues.A_LENGTH] == null ? 0 : (int)boneObject [ConstValues.A_LENGTH];
 			}
 
-
+            
 			if (boneObject.ContainsKey (ConstValues.A_INHERIT_SCALE)) {
 				Object scaleModeObj = boneObject[ConstValues.A_INHERIT_SCALE];
 			   if (scaleModeObj != null) 
@@ -110,7 +110,8 @@ namespace DragonBones
 				   boneData.inheritRotation = inheritRotation;
 			     }
 			}
-			parseTransform(boneObject[ConstValues.TRANSFORM] as Dictionary<string, object>, boneData.global);
+           
+            parseTransform(boneObject[ConstValues.TRANSFORM] as Dictionary<string, object>, boneData.global);
 			boneData.transform.Copy(boneData.global);
 
 			//Logger.Log (boneData.name + " " +  boneData.transform.X + " " + boneData.transform.Y);
@@ -178,9 +179,10 @@ namespace DragonBones
 		
 		private static AnimationData parseAnimationData(Dictionary<String, Object> animationObject, ArmatureData armatureData, uint frameRate)
 		{
+            
 			AnimationData animationData = new AnimationData();
 			animationData.name = animationObject[ConstValues.A_NAME] as String;
-			animationData.frameRate = (int)frameRate;
+            animationData.frameRate = (int)frameRate;
 
             animationData.playTimes = int.Parse(animationObject[ConstValues.A_LOOP].ToString());
 			animationData.fadeTime = (float)animationObject[ConstValues.A_FADE_IN_TIME];

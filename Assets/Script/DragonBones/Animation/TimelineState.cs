@@ -189,7 +189,7 @@ namespace DragonBones
 		{
 			progress /= _timeline.scale;
 			progress += _timeline.offset;
-            //Logger.Log(progress);
+            
 			int currentTime = (int)(_totalTime * progress);
 			int currentPlayTimes = 0;
 			int playTimes = _animationState.getPlayTimes();
@@ -245,8 +245,8 @@ namespace DragonBones
 			{
 				currentPlayTimes = 1;
 			}
-			
-			if (_currentTime != currentTime)
+
+            if (_currentTime != currentTime)
 			{
 				_currentTime = currentTime;
 
@@ -320,9 +320,11 @@ namespace DragonBones
 				if (_blendEnabled)
 				{
 					updateTween();
-				}
+                  
+                }
 			}
-		}
+
+        }
 
 
 		public void updateToNextFrame(int currentPlayTimes)
@@ -571,12 +573,22 @@ namespace DragonBones
 					_bone.updateColor(0, 0, 0, 0, 1.0f, 1.0f, 1.0f, 1.0f, false);
 				}
 			}
-		}
 
-		public void updateTween()
+
+
+        }
+
+        public void updateTween()
 		{
 			float progress = (_currentTime - _currentFramePosition) / (float)(_currentFrameDuration);
-                   
+
+            if (name == "head")
+            {
+                Logger.Log("==============================================" + progress + "      " + _currentTime + "   " + _currentFramePosition + "  " + _currentFrameDuration);
+
+            }
+
+
             if (_tweenEasing!=0 && _tweenEasing != DragonBones.NO_TWEEN_EASING)
 			{
 				progress = DragonBones.getEaseValue(progress, _tweenEasing);
@@ -625,9 +637,13 @@ namespace DragonBones
 
 					_pivot.X = _originPivot.X + currentPivot.X + _durationPivot.X * progress;
 					_pivot.Y = _originPivot.Y + currentPivot.Y + _durationPivot.Y * progress;
-				}
-				
-				_bone.invalidUpdate();
+
+                    
+                }
+
+             
+
+                _bone.invalidUpdate();
 			}
 			
 			if (_tweenColor && _animationState.displayControl)
@@ -662,6 +678,7 @@ namespace DragonBones
 				}
 			}
 
+          
 
         }
 

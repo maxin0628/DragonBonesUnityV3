@@ -54,7 +54,8 @@ namespace DragonBones
 		public const string A_HEIGHT = "height";
 		public const string A_INHERIT_SCALE = "inheritScale";
 		public const string A_FIXED_ROTATION = "fixedRotation";
-		public const string A_X = "x";
+        public const string A_SCALE_MODE = "scaleMode";
+        public const string A_X = "x";
 		public const string A_Y = "y";
 		public const string A_SKEW_X = "skX";
 		public const string A_SKEW_Y = "skY";

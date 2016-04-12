@@ -43,8 +43,8 @@ namespace DragonBones
 			_isColorChanged = false;
 			_needUpdate = 2;
 			_tween.ScaleX = _tween.ScaleY = 0.0f;
-			inheritRotation = true;
-			inheritScale = false;
+			//inheritRotation = false;
+			//inheritScale = false;
 
 		}
 
@@ -219,24 +219,24 @@ namespace DragonBones
 
                 if (inheritRotation)
 				{
-                    global.SkewX = origin.SkewX + offset.SkewX + _tween.SkewX + _parent.global.SkewX;
-                    global.SkewY = origin.SkewY + offset.SkewY + _tween.SkewY + _parent.global.SkewY;
+                    global.SkewX = origin.SkewX + offset.SkewX + _tween.SkewX ;
+                    global.SkewY = origin.SkewY + offset.SkewY + _tween.SkewY ;
 				}
 				else
 				{
-                    global.SkewX = origin.SkewX + offset.SkewX + _tween.SkewX;
-
-                    global.SkewY = origin.SkewY + offset.SkewY + _tween.SkewY;
+                    //diffrent from c++
+                    global.SkewX = origin.SkewX + offset.SkewX + _tween.SkewX + _parent.global.SkewX;
+                    global.SkewY = origin.SkewY + offset.SkewY + _tween.SkewY + _parent.global.SkewY;
                    
 				}
 				
-				if (inheritScale)
+				if (!inheritScale)
 				{
 					global.ScaleX *= _parent.global.ScaleX;
 					global.ScaleY *= _parent.global.ScaleY;
 				}
-								if(name == "head")
-                Logger.Log(_tween.X  + "  " + _tween.Y   + "   " + _tween.SkewX+ "  " + _tween.SkewY);
+			
+               
             }
 			else
 			{
@@ -246,6 +246,8 @@ namespace DragonBones
 				global.SkewY = origin.SkewY + offset.SkewY + _tween.SkewY;
 			}
 
+            if(name == "head")
+            Logger.Log(" head                  " + _tween.SkewX + "  " + _tween.SkewY);
 
       
             globalTransformMatrix.A = offset.ScaleX * (float)Math.Cos(global.SkewY);
@@ -392,8 +394,9 @@ namespace DragonBones
 				_tween.ScaleY = transform.ScaleY * weight;
 				_tweenPivot.X = pivot.X * weight;
 				_tweenPivot.Y = pivot.Y * weight;
-                
-			}
+
+
+            }
 			else if (i > 1)
 			{
 				int prevLayer = _timelineStateList[i - 1]._animationState.getLayer();
@@ -446,7 +449,9 @@ namespace DragonBones
 						pivotY += pivot.Y * weight;
 						layerTotalWeight += weight;
 					}
-				}
+
+                   
+                }
 				
 				_tween.X = x;
 				_tween.Y = y;
@@ -456,10 +461,12 @@ namespace DragonBones
 				_tween.ScaleY = scaleY;
 				_tweenPivot.X = pivotX;
 				_tweenPivot.Y = pivotY;
-                
-			}
-            
-		}
+
+
+            }
+
+
+        }
 
 
 	 
