@@ -57,7 +57,9 @@ namespace DragonBones
 
 			for (int i = 0; i < slotList.Count; i++) {
 
-				Slot slot = slotList[i];
+
+                //if the vetex order is not follow the z oder the edge of sprite will break
+				Slot slot = slotList[slotList.Count - i - 1];
 				float[] slotVertices = (slot.getDisplay() as UnityBoneDisplay).Vetices;
 				float[] slotUVs = (slot.getDisplay() as UnityBoneDisplay).UVs;
 

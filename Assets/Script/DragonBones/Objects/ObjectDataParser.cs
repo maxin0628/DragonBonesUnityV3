@@ -188,8 +188,8 @@ namespace DragonBones
 			animationData.fadeTime = (float)animationObject[ConstValues.A_FADE_IN_TIME];
 			animationData.duration = (int)((float)animationObject [ConstValues.A_DURATION] * 1000.0f /frameRate);
 			animationData.scale = (float)animationObject[ConstValues.A_SCALE];
-			
-			if(animationObject.ContainsKey(ConstValues.A_TWEEN_EASING))
+
+            if (animationObject.ContainsKey(ConstValues.A_TWEEN_EASING))
 			{
 				Object tweenEase = animationObject[ConstValues.A_TWEEN_EASING];
 				if(
@@ -205,10 +205,21 @@ namespace DragonBones
 			}
 			else
 			{
-				animationData.tweenEasing = float.NaN;
+				animationData.tweenEasing = DragonBones.USE_FRAME_TWEEN_EASING;
 			}
-			
-			parseTimeline(animationObject as Dictionary<string, object>, animationData, parseMainFrame, frameRate);
+
+
+            if (animationObject.ContainsKey(ConstValues.A_AUTO_TWEEN))
+            {
+                bool autoTween = bool.Parse(animationObject[ConstValues.A_TWEEN_EASING].ToString());
+                animationData.autoTween = autoTween;
+            }
+            else
+            {
+                animationData.autoTween = true;
+            }
+
+            parseTimeline(animationObject as Dictionary<string, object>, animationData, parseMainFrame, frameRate);
 			
 			TransformTimeline timeline;
 			string timelineName;

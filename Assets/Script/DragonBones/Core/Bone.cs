@@ -213,9 +213,9 @@ namespace DragonBones
                 float y = origin.Y + offset.Y + _tween.Y;
 			    Com.Viperstudio.Geom.Matrix parentMatrix = _parent.globalTransformMatrix;
 
-                globalTransformMatrix.Tx = global.X = parentMatrix.A * x + parentMatrix.C * y + parentMatrix.Tx;
+                globalTransformMatrix.Tx = global.X = parentMatrix.A * x * _parent.global.ScaleX + parentMatrix.C * y * _parent.global.ScaleY + parentMatrix.Tx;
 
-                globalTransformMatrix.Ty = global.Y = parentMatrix.D * y + parentMatrix.B * x +  parentMatrix.Ty;
+                globalTransformMatrix.Ty = global.Y = parentMatrix.D * y * _parent.global.ScaleY + parentMatrix.B * x * _parent.global.ScaleX +  parentMatrix.Ty;
 
                 if (inheritRotation)
 				{
@@ -246,11 +246,7 @@ namespace DragonBones
 				global.SkewY = origin.SkewY + offset.SkewY + _tween.SkewY;
 			}
 
-            if(name == "head")
-            Logger.Log(" head                  " + _tween.SkewX + "  " + _tween.SkewY);
-
-      
-            globalTransformMatrix.A = offset.ScaleX * (float)Math.Cos(global.SkewY);
+           globalTransformMatrix.A = offset.ScaleX * (float)Math.Cos(global.SkewY);
 			globalTransformMatrix.B = offset.ScaleX * (float)Math.Sin(global.SkewY);
 			globalTransformMatrix.C = -offset.ScaleY * (float)Math.Sin(global.SkewX);
 			globalTransformMatrix.D = offset.ScaleY * (float)Math.Cos(global.SkewX);

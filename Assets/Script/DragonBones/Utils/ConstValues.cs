@@ -46,7 +46,8 @@ namespace DragonBones
 		public const string A_ACTION = "action";
 		public const string A_HIDE = "hide";
 		public const string A_TWEEN_EASING = "tweenEasing";
-		public const string A_TWEEN_ROTATE = "tweenRotate";
+        public const string A_AUTO_TWEEN = "autoTween";
+        public const string A_TWEEN_ROTATE = "tweenRotate";
 		public const string A_DISPLAY_INDEX = "displayIndex";
 		public const string A_Z_ORDER = "z";
 		public const string A_BLENDMODE = "blendMode";

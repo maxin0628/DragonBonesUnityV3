@@ -582,15 +582,10 @@ namespace DragonBones
 		{
 			float progress = (_currentTime - _currentFramePosition) / (float)(_currentFrameDuration);
 
-            if (name == "head")
-            {
-                Logger.Log("==============================================" + progress + "      " + _currentTime + "   " + _currentFramePosition + "  " + _currentFrameDuration);
-
-            }
-
 
             if (_tweenEasing!=0 && _tweenEasing != DragonBones.NO_TWEEN_EASING)
-			{
+
+            {
 				progress = DragonBones.getEaseValue(progress, _tweenEasing);
 			}
 			
